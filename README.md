@@ -1,5 +1,5 @@
 ## 🤎⋆ ˚｡⋆୨୧아몬드송송୨୧⋆｡˚ ⋆🤎
- 개인페이지 `링크`
+ 개인페이지 `https://almondsongsong.github.io/profile/`
 - 트위터 `https://x.com/almondsongsong`
 - 유니챗 `https://www.univers.chat/creator/2666362a-b2d1-4cbe-9a2d-cbd5c6bb1563`
 - 크랙 `https://share.crack.wrtn.ai/95uap8g`
