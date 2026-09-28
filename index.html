@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>아몬드송송 | 이야기의 주인공이 되어보세요</title>
+  <style>
+    :root {
+      --bg: #191614;
+      --panel: #30251e;
+      --text: #f6eee4;
+      --muted: #baa999;
+      --accent: #d9ad83;
+      --edge: #604c3d;
+    }
+
+    :root[data-theme="light"] {
+      --bg: #f5efe7;
+      --panel: #fffaf4;
+      --text: #30231d;
+      --muted: #756458;
+      --accent: #8d5e3e;
+      --edge: #d7bda7;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: var(--bg); }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Noto Sans KR", sans-serif;
+    }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; cursor: pointer; }
+
+    button:focus-visible, a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .page {
+      width: min(100%, 1100px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 20px 24px 26px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: min(100%, 720px);
+      margin: 0 auto;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .icon-button {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 34px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .theme-button { font-size: 22px; }
+    .menu-button { font-size: 20px; }
+
+    .icon-button:hover { color: var(--accent); }
+
+    .menu-panel {
+      position: absolute;
+      top: 42px;
+      right: 0;
+      width: min(320px, calc(100vw - 32px));
+      padding: 12px;
+      border: 1px solid var(--edge);
+      border-radius: 13px;
+      background: var(--panel);
+      box-shadow: 0 15px 35px #0007;
+    }
+
+    .menu-panel[hidden], .menu-work-list[hidden], .about-copy[hidden] {
+      display: none;
+    }
+
+    .menu-panel button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .menu-panel button:hover,
+    .menu-panel button:focus-visible {
+      background: var(--bg);
+      color: var(--accent);
+    }
+
+    .about-copy {
+      padding: 4px 10px 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .menu-work-list button { padding-left: 20px; }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .heading {
+      margin: 22px 0 4px;
+      text-align: center;
+    }
+
+    .heading small {
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+
+    .heading h1 {
+      margin: 9px 0;
+      font-size: clamp(23px, 4vw, 29px);
+      letter-spacing: -1px;
+      word-break: keep-all;
+    }
+
+    .heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stage {
+      position: relative;
+      height: 405px;
+      user-select: none;
+      touch-action: pan-y;
+      perspective: 1100px;
+    }
+
+    .story-card {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      z-index: 1;
+      width: 225px;
+      height: 332px;
+      margin-left: -112.5px;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.2,.7,.2,1),
+                  opacity .55s, filter .55s;
+    }
+
+    .story-card[data-distance="0"] {
+      z-index: 8;
+      transform: translateX(0) scale(1);
+      opacity: 1;
+    }
+
+    .story-card[data-distance="-1"] {
+      z-index: 7;
+      transform: translateX(-145px) scale(.88);
+      filter: brightness(.63);
+    }
+
+    .story-card[data-distance="1"] {
+      z-index: 7;
+      transform: translateX(145px) scale(.88);
+      filter: brightness(.63);
+    }
+
+    .story-card[data-distance="-2"] {
+      z-index: 6;
+      transform: translateX(-220px) scale(.73);
+      filter: brightness(.42);
+    }
+
+    .story-card[data-distance="2"] {
+      z-index: 6;
+      transform: translateX(220px) scale(.73);
+      filter: brightness(.42);
+    }
+
+    .story-card[data-distance="hidden"] {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(.4);
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .55s ease;
+    }
+
+    .story-card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--edge);
+      border-radius: 15px;
+      background: var(--panel);
+      backface-visibility: hidden;
+      box-shadow: 0 20px 35px #0005;
+    }
+
+    .card-art {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 18px;
+      background: linear-gradient(145deg, #8c6a52, #50362c 48%, #221b1b);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .story-card:nth-child(4n+2) .card-art {
+      background-color: #513d48;
+    }
+
+    .story-card:nth-child(4n+3) .card-art {
+      background-color: #373f63;
+    }
+
+    .story-card:nth-child(4n+4) .card-art {
+      background-color: #58443a;
+    }
+
+    .cover-title {
+      position: relative;
+      z-index: 1;
+      color: #fff1e6;
+      font: italic 16px/1.35 Georgia, serif;
+      text-shadow: 0 1px 8px #0009;
+      word-break: keep-all;
+    }
+
+    .card-caption {
+      min-height: 103px;
+      padding: 13px 15px;
+    }
+
+    .card-caption small,
+    .card-back small {
+      color: var(--accent);
+      font-size: 10px;
+    }
+
+    .card-caption strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 13px;
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+
+    .channels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 9px;
+    }
+
+    .channels a {
+      padding: 5px 8px;
+      border: 1px solid var(--channel-color);
+      border-radius: 15px;
+      background: transparent;
+      color: var(--text);
+      font-size: 10px;
+      line-height: 1.2;
+      text-decoration: none;
+    }
+
+    .channels a:hover {
+      background: var(--channel-color);
+      color: #fff;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      justify-content: center;
+      gap: 13px;
+      padding: 20px;
+    }
+
+    .card-back strong {
+      font-size: 18px;
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+
+    .card-back p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .back-tip {
+      margin-top: auto;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 44px 68px 44px;
+      justify-content: center;
+      align-items: center;
+      column-gap: 16px;
+    }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font: 400 23px/1 Arial, sans-serif;
+    }
+
+    .arrow:hover { color: var(--text); }
+
+    .counter {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .story-summary {
+      min-height: 26px;
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px 16px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--edge);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .copyright {
+      min-width: 0;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .contacts {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .contacts a {
+      display: inline-flex;
+      align-items: center;
+      color: var(--text);
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .contacts a:hover { color: var(--accent); }
+
+    .x-link {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .mail-link { font-size: 21px; }
+
+    @media (max-width: 600px) {
+      .page { padding: 17px 12px 22px; }
+
+      .stage { height: 412px; }
+
+      .story-card {
+        top: 12px;
+        width: 218px;
+        height: 365px;
+        margin-left: -109px;
+      }
+
+      .story-card[data-distance="-1"] {
+        transform: translateX(-107px) scale(.87);
+      }
+
+      .story-card[data-distance="1"] {
+        transform: translateX(107px) scale(.87);
+      }
+
+      .story-card[data-distance="-2"] {
+        transform: translateX(-165px) scale(.7);
+      }
+
+      .story-card[data-distance="2"] {
+        transform: translateX(165px) scale(.7);
+      }
+
+      .card-art { padding: 15px; }
+      .cover-title { font-size: 14px; }
+
+      .card-caption {
+        min-height: 92px;
+        padding: 10px 12px;
+      }
+
+      .card-caption strong { font-size: 12px; }
+      .card-back { padding: 14px; }
+      .card-back strong { font-size: 15px; }
+
+      .footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .story-card[data-distance="-1"] {
+        transform: translateX(-100px) scale(.87);
+      }
+
+      .story-card[data-distance="1"] {
+        transform: translateX(100px) scale(.87);
+      }
+
+      .contacts { gap: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .story-card, .card-inner { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <nav class="header-actions" aria-label="페이지 설정">
+        <button
+          class="icon-button theme-button"
+          id="themeButton"
+          type="button"
+          aria-label="라이트 모드로 변경"
+        >◐</button>
+        <button
+          class="icon-button menu-button"
+          id="menuButton"
+          type="button"
+          aria-label="페이지 메뉴"
+          aria-expanded="false"
+          aria-controls="menuPanel"
+        >☰</button>
+      </nav>
+
+      <div class="menu-panel" id="menuPanel" hidden>
+        <button id="aboutButton" type="button" aria-expanded="false">
+          작가 소개
+        </button>
+        <div class="about-copy" id="aboutCopy" hidden>
+          대화하며 완성하는 로맨스와 캐릭터 이야기를 만드는
+          AI 채팅 크리에이터, 아몬드송송입니다.
+        </div>
+
+        <button id="worksButton" type="button" aria-expanded="false">
+          작품 소개
+        </button>
+        <div class="menu-work-list" id="menuWorkList" hidden></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="heading">
+        <small>STORIES YOU CAN STEP INTO</small>
+        <h1>어떤 이야기의 주인공이 되어볼까요?</h1>
+        <p>카드를 넘겨 작품을 골라보세요.</p>
+      </section>
+
+      <section class="stage" id="stage" aria-label="작품 카드"></section>
+
+      <div class="controls">
+        <button class="arrow" id="prevButton" type="button" aria-label="이전 작품">&lt;</button>
+        <span class="counter" id="counter" aria-live="polite"></span>
+        <button class="arrow" id="nextButton" type="button" aria-label="다음 작품">&gt;</button>
+      </div>
+
+      <p class="story-summary" id="storySummary" aria-live="polite"></p>
+    </main>
+
+    <footer class="footer">
+      <span class="copyright">© 2026 🤎⋆ ˚｡⋆୨୧아몬드송송୨୧⋆｡˚ ⋆🤎 · ALL RIGHTS RESERVED</span>
+      <div class="contacts">
+        <!-- 아래 주소를 실제 X 계정 주소로 바꿔주세요. -->
+        <a class="x-link" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X 계정">𝕏</a>
+        <!-- 아래 mailto: 뒤에 실제 이메일 주소를 입력해 주세요. -->
+        <a class="mail-link" href="mailto:" aria-label="이메일 보내기">✉</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /*
+      image: 표지 이미지의 직접 주소. 없으면 ""로 두세요.
+      channels의 url: 해당 작품을 볼 수 있는 채널의 실제 주소.
+      아직 주소가 없으면 ""로 두세요.
+    */
+    const works = [
+      {
+        title: "아래쪽은 다 압니다만",
+        category: "의료 로맨스",
+        summary: "앙숙 의사들의 날카로운 만남",
+        description: "성운대 메디컬 센터에서 만난 두 의사의 앙숙 로맨스. 진료 방식은 다르지만 서로의 실력은 인정합니다.",
+        image: "",
+        channels: [
+          { name: "티키타", url: "" },
+          { name: "케이브덕", url: "" },
+          { name: "크랙", url: "" }
+        ]
+      },
+      {
+        title: "최애가 나를 찾고 있다",
+        category: "배우 × 작가",
+        summary: "내 소설을 읽는 최애 배우",
+        description: "얼굴 없는 작가 안개와 그녀의 소설을 읽어 온 톱배우. 숨겨진 정체를 사이에 두고 이야기가 시작됩니다.",
+        image: "",
+        channels: [
+          { name: "티키타", url: "" },
+          { name: "유니챗", url: "" },
+          { name: "케이브덕", url: "" }
+        ]
+      },
+      {
+        title: "현실에선 상극. 접속하면 절친 (남성향)",
+        category: "캠퍼스 로코 · 남성향",
+        summary: "온라인 절친, 현실 상극",
+        description: "현실에서는 상극인 대학 동기. 게임에서는 서로의 정체를 모른 채 1년째 호흡을 맞춰 온 듀오입니다.",
+        image: "",
+        channels: [
+          { name: "티키타", url: "" },
+          { name: "케이브덕", url: "" }
+        ]
+      },
+      {
+        title: "현실에선 상극. 접속하면 절친 (여성향)",
+        category: "캠퍼스 로코 · 여성향",
+        summary: "온라인 절친, 현실 상극",
+        description: "현실에서는 상극이지만 게임에서는 친밀한 듀오가 된 두 사람의 이야기.",
+        image: "",
+        channels: [
+          { name: "티키타", url: "" }
+        ]
+      },
+      {
+        title: "칼끝과 펜끝이 젖어 드는 밤",
+        category: "셰프 × 리뷰어",
+        summary: "한 접시에서 시작된 이야기",
+        description: "셰프와 리뷰어가 한 접시의 요리를 계기로 만나는 이야기.",
+        image: "",
+        channels: [
+          { name: "티키타", url: "" }
+        ]
+      }
+    ];
+
+    const channelColors = {
+      "티키타": "#4E42FF",
+      "유니챗": "#FB7185",
+      "크랙": "#FF3D33",
+      "케이브덕": "#EDA71C"
+    };
+
+    const stage = document.getElementById("stage");
+    const counter = document.getElementById("counter");
+    const summary = document.getElementById("storySummary");
+    const menuButton = document.getElementById("menuButton");
+    const menuPanel = document.getElementById("menuPanel");
+    const aboutButton = document.getElementById("aboutButton");
+    const aboutCopy = document.getElementById("aboutCopy");
+    const worksButton = document.getElementById("worksButton");
+    const menuWorkList = document.getElementById("menuWorkList");
+    const themeButton = document.getElementById("themeButton");
+
+    let current = 0;
+    let touchStartX = 0;
+
+    function makeCard(work, index) {
+      const card = document.createElement("article");
+      card.className = "story-card";
+      card.setAttribute("aria-label", work.title + " 작품 카드");
+
+      const inner = document.createElement("div");
+      inner.className = "card-inner";
+
+      const front = document.createElement("div");
+      front.className = "card-face card-front";
+
+      const art = document.createElement("div");
+      art.className = "card-art";
+
+      if (work.image) {
+        art.style.backgroundImage =
+          `linear-gradient(to top, rgba(0,0,0,.55), transparent 55%), url("${work.image.replaceAll('"', '%22')}")`;
+      }
+
+      const coverTitle = document.createElement("span");
+      coverTitle.className = "cover-title";
+      coverTitle.textContent = work.title;
+      art.appendChild(coverTitle);
+
+      const caption = document.createElement("div");
+      caption.className = "card-caption";
+
+      const category = document.createElement("small");
+      category.textContent = work.category;
+
+      const title = document.createElement("strong");
+      title.textContent = work.title;
+
+      const channels = document.createElement("div");
+      channels.className = "channels";
+
+      work.channels.forEach(channel => {
+        const link = document.createElement("a");
+        link.textContent = channel.name;
+        link.setAttribute("aria-label", channel.name + "에서 작품 보기");
+        link.style.setProperty(
+          "--channel-color",
+          channelColors[channel.name] || "var(--accent)"
+        );
+
+        if (channel.url) {
+          link.href = channel.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        } else {
+          link.href = "#";
+          link.addEventListener("click", event => event.preventDefault());
+        }
+
+        link.addEventListener("click", event => event.stopPropagation());
+        channels.appendChild(link);
+      });
+
+      caption.append(category, title, channels);
+      front.append(art, caption);
+
+      const back = document.createElement("div");
+      back.className = "card-face card-back";
+
+      const backLabel = document.createElement("small");
+      backLabel.textContent = "STORY INFO";
+
+      const backTitle = document.createElement("strong");
+      backTitle.textContent = work.title;
+
+      const description = document.createElement("p");
+      description.textContent = work.description;
+
+      const tip = document.createElement("span");
+      tip.className = "back-tip";
+      tip.textContent = "카드를 다시 누르면 앞면으로 돌아갑니다";
+
+      back.append(backLabel, backTitle, description, tip);
+      inner.append(front, back);
+      card.appendChild(inner);
+
+      card.addEventListener("click", event => {
+        if (event.target.closest("a")) return;
+
+        if (current === index) {
+          card.classList.toggle("flipped");
+        } else {
+          current = index;
+          render();
+        }
+      });
+
+      return card;
+    }
+
+    works.forEach((work, index) => {
+      stage.appendChild(makeCard(work, index));
+
+      const menuItem = document.createElement("button");
+      menuItem.type = "button";
+      menuItem.textContent = work.title;
+      menuItem.addEventListener("click", () => {
+        current = index;
+        render();
+        closeMenu();
+      });
+      menuWorkList.appendChild(menuItem);
+    });
+
+    function render() {
+      [...stage.children].forEach((card, index) => {
+        let distance = index - current;
+
+        if (distance > works.length / 2) distance -= works.length;
+        if (distance < -works.length / 2) distance += works.length;
+
+        card.dataset.distance =
+          Math.abs(distance) > 2 ? "hidden" : String(distance);
+
+        if (distance !== 0) card.classList.remove("flipped");
+      });
+
+      counter.textContent =
+        `${String(current + 1).padStart(2, "0")} / ${String(works.length).padStart(2, "0")}`;
+
+      summary.textContent = works[current].summary;
+    }
+
+    document.getElementById("prevButton").addEventListener("click", () => {
+      current = (current - 1 + works.length) % works.length;
+      render();
+    });
+
+    document.getElementById("nextButton").addEventListener("click", () => {
+      current = (current + 1) % works.length;
+      render();
+    });
+
+    stage.addEventListener("touchstart", event => {
+      touchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+
+    stage.addEventListener("touchend", event => {
+      const distance =
+        event.changedTouches[0].screenX - touchStartX;
+
+      if (Math.abs(distance) > 40) {
+        current =
+          (current + (distance < 0 ? 1 : -1) + works.length) % works.length;
+        render();
+      }
+    }, { passive: true });
+
+    function closeMenu() {
+      menuPanel.hidden = true;
+      menuButton.setAttribute("aria-expanded", "false");
+    }
+
+    menuButton.addEventListener("click", () => {
+      menuPanel.hidden = !menuPanel.hidden;
+      menuButton.setAttribute("aria-expanded", String(!menuPanel.hidden));
+    });
+
+    aboutButton.addEventListener("click", () => {
+      aboutCopy.hidden = !aboutCopy.hidden;
+      aboutButton.setAttribute("aria-expanded", String(!aboutCopy.hidden));
+    });
+
+    worksButton.addEventListener("click", () => {
+      menuWorkList.hidden = !menuWorkList.hidden;
+      worksButton.setAttribute("aria-expanded", String(!menuWorkList.hidden));
+    });
+
+    document.addEventListener("click", event => {
+      if (!event.target.closest(".header")) closeMenu();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeMenu();
+    });
+
+    function updateThemeButton() {
+      const light = document.documentElement.dataset.theme === "light";
+      themeButton.setAttribute(
+        "aria-label",
+        light ? "다크 모드로 변경" : "라이트 모드로 변경"
+      );
+    }
+
+    themeButton.addEventListener("click", () => {
+      const light = document.documentElement.dataset.theme === "light";
+      document.documentElement.dataset.theme = light ? "dark" : "light";
+
+      try {
+        localStorage.setItem(
+          "almond-theme",
+          document.documentElement.dataset.theme
+        );
+      } catch (error) {}
+
+      updateThemeButton();
+    });
+
+    try {
+      const savedTheme = localStorage.getItem("almond-theme");
+      if (savedTheme === "light" || savedTheme === "dark") {
+        document.documentElement.dataset.theme = savedTheme;
+      }
+    } catch (error) {}
+
+    updateThemeButton();
+    render();
+  </script>
+</body>
+</html>
