@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>아몬드송송 | 이야기의 주인공이 되어보세요</title>
+  <title>아몬드송송 | 작품 소개</title>
   <style>
     :root {
       --bg: #191614;
@@ -25,27 +25,28 @@
 
     * { box-sizing: border-box; }
 
-    html { background: var(--bg); }
-
-    body {
+    html, body {
+      width: 100%;
       min-width: 320px;
       margin: 0;
       background: var(--bg);
+    }
+
+    body {
       color: var(--text);
       font-family: Arial, "Noto Sans KR", sans-serif;
     }
 
-    button, a { -webkit-tap-highlight-color: transparent; }
     button { font: inherit; cursor: pointer; }
 
     button:focus-visible, a:focus-visible {
       outline: 2px solid var(--accent);
-      outline-offset: 4px;
+      outline-offset: 3px;
     }
 
     .page {
-      width: min(100%, 1100px);
-      min-height: 100vh;
+      width: min(100%, 1200px);
+      min-height: 100svh;
       margin: 0 auto;
       padding: 20px 24px 26px;
       display: flex;
@@ -58,8 +59,8 @@
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      width: min(100%, 720px);
-      margin: 0 auto;
+      width: 100%;
+      min-height: 36px;
     }
 
     .header-actions {
@@ -82,7 +83,6 @@
 
     .theme-button { font-size: 22px; }
     .menu-button { font-size: 20px; }
-
     .icon-button:hover { color: var(--accent); }
 
     .menu-panel {
@@ -90,6 +90,8 @@
       top: 42px;
       right: 0;
       width: min(320px, calc(100vw - 32px));
+      max-height: min(75svh, 500px);
+      overflow-y: auto;
       padding: 12px;
       border: 1px solid var(--edge);
       border-radius: 13px;
@@ -97,9 +99,7 @@
       box-shadow: 0 15px 35px #0007;
     }
 
-    .menu-panel[hidden], .menu-work-list[hidden], .about-copy[hidden] {
-      display: none;
-    }
+    [hidden] { display: none !important; }
 
     .menu-panel button {
       display: block;
@@ -134,10 +134,11 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      min-width: 0;
     }
 
     .heading {
-      margin: 22px 0 4px;
+      margin: 18px 0 0;
       text-align: center;
     }
 
@@ -158,24 +159,30 @@
       margin: 0;
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.7;
+      word-break: keep-all;
     }
 
+    .heading p span { display: block; }
+
     .stage {
+      --card-width: clamp(225px, 27vw, 310px);
+      --card-height: clamp(332px, 39vw, 450px);
       position: relative;
-      height: 405px;
+      height: calc(var(--card-height) + 68px);
       user-select: none;
       touch-action: pan-y;
-      perspective: 1100px;
+      perspective: 1200px;
     }
 
     .story-card {
       position: absolute;
-      top: 30px;
+      top: 24px;
       left: 50%;
       z-index: 1;
-      width: 225px;
-      height: 332px;
-      margin-left: -112.5px;
+      width: var(--card-width);
+      height: var(--card-height);
+      margin-left: calc(var(--card-width) / -2);
       border: 0;
       padding: 0;
       background: transparent;
@@ -194,25 +201,25 @@
 
     .story-card[data-distance="-1"] {
       z-index: 7;
-      transform: translateX(-145px) scale(.88);
+      transform: translateX(calc(var(--card-width) * -.68)) scale(.88);
       filter: brightness(.63);
     }
 
     .story-card[data-distance="1"] {
       z-index: 7;
-      transform: translateX(145px) scale(.88);
+      transform: translateX(calc(var(--card-width) * .68)) scale(.88);
       filter: brightness(.63);
     }
 
     .story-card[data-distance="-2"] {
       z-index: 6;
-      transform: translateX(-220px) scale(.73);
+      transform: translateX(calc(var(--card-width) * -1.12)) scale(.73);
       filter: brightness(.42);
     }
 
     .story-card[data-distance="2"] {
       z-index: 6;
-      transform: translateX(220px) scale(.73);
+      transform: translateX(calc(var(--card-width) * 1.12)) scale(.73);
       filter: brightness(.42);
     }
 
@@ -230,9 +237,7 @@
       transition: transform .55s ease;
     }
 
-    .story-card.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
+    .story-card.flipped .card-inner { transform: rotateY(180deg); }
 
     .card-face {
       position: absolute;
@@ -275,7 +280,7 @@
       position: relative;
       z-index: 1;
       color: #fff1e6;
-      font: italic 16px/1.35 Georgia, serif;
+      font: italic clamp(16px, 1.9vw, 21px)/1.35 Georgia, serif;
       text-shadow: 0 1px 8px #0009;
       word-break: keep-all;
     }
@@ -377,21 +382,38 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .story-summary {
-      min-height: 26px;
-      margin: 9px 0 0;
+    .selected-work {
+      min-height: 84px;
+      max-width: 620px;
+      margin: 9px auto 0;
+      text-align: center;
+      word-break: keep-all;
+    }
+
+    .selected-work h2 {
+      margin: 0 0 7px;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .selected-work p {
+      margin: 0;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.5;
-      text-align: center;
+      line-height: 1.65;
+      white-space: pre-line; /* 마침표 뒤에 추가한 줄바꿈 표시 */
     }
 
     .footer {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 12px 16px;
+      width: 100%;
+      min-width: 0;
       margin-top: 16px;
       padding-top: 12px;
       border-top: 1px solid var(--edge);
@@ -421,25 +443,22 @@
     }
 
     .contacts a:hover { color: var(--accent); }
-
-    .x-link {
-      font-size: 17px;
-      font-weight: 700;
-    }
-
+    .x-link { font-size: 17px; font-weight: 700; }
     .mail-link { font-size: 21px; }
 
     @media (max-width: 600px) {
       .page { padding: 17px 12px 22px; }
 
-      .stage { height: 412px; }
+      .heading { margin-top: 18px; }
+      .heading p { font-size: 12px; }
 
-      .story-card {
-        top: 12px;
-        width: 218px;
-        height: 365px;
-        margin-left: -109px;
+      .stage {
+        --card-width: 218px;
+        --card-height: 365px;
+        height: 412px;
       }
+
+      .story-card { top: 12px; }
 
       .story-card[data-distance="-1"] {
         transform: translateX(-107px) scale(.87);
@@ -469,10 +488,25 @@
       .card-back { padding: 14px; }
       .card-back strong { font-size: 15px; }
 
+      .selected-work {
+        min-height: 105px;
+        padding: 0 10px;
+      }
+
+      .selected-work h2 { font-size: 14px; }
+      .selected-work p { font-size: 12px; }
+
       .footer {
         flex-direction: column;
         align-items: flex-start;
       }
+
+      .copyright {
+        width: 100%;
+        white-space: normal;
+      }
+
+      .contacts { align-self: flex-end; }
     }
 
     @media (max-width: 380px) {
@@ -483,8 +517,6 @@
       .story-card[data-distance="1"] {
         transform: translateX(100px) scale(.87);
       }
-
-      .contacts { gap: 12px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -496,34 +528,21 @@
   <div class="page">
     <header class="header">
       <nav class="header-actions" aria-label="페이지 설정">
-        <button
-          class="icon-button theme-button"
-          id="themeButton"
-          type="button"
-          aria-label="라이트 모드로 변경"
-        >◐</button>
-        <button
-          class="icon-button menu-button"
-          id="menuButton"
-          type="button"
-          aria-label="페이지 메뉴"
-          aria-expanded="false"
-          aria-controls="menuPanel"
-        >☰</button>
+        <button class="icon-button theme-button" id="themeButton"
+                type="button" aria-label="라이트 모드로 변경">◐</button>
+        <button class="icon-button menu-button" id="menuButton"
+                type="button" aria-label="페이지 메뉴"
+                aria-expanded="false" aria-controls="menuPanel">☰</button>
       </nav>
 
       <div class="menu-panel" id="menuPanel" hidden>
-        <button id="aboutButton" type="button" aria-expanded="false">
-          작가 소개
-        </button>
+        <button id="aboutButton" type="button" aria-expanded="false">작가 소개</button>
         <div class="about-copy" id="aboutCopy" hidden>
           대화하며 완성하는 로맨스와 캐릭터 이야기를 만드는
           AI 채팅 크리에이터, 아몬드송송입니다.
         </div>
 
-        <button id="worksButton" type="button" aria-expanded="false">
-          작품 소개
-        </button>
+        <button id="worksButton" type="button" aria-expanded="false">작품 소개</button>
         <div class="menu-work-list" id="menuWorkList" hidden></div>
       </div>
     </header>
@@ -532,7 +551,10 @@
       <section class="heading">
         <small>STORIES YOU CAN STEP INTO</small>
         <h1>어떤 이야기의 주인공이 되어볼까요?</h1>
-        <p>카드를 넘겨 작품을 골라보세요.</p>
+        <p>
+          <span>카드를 넘겨 작품을 골라보세요.</span>
+          <span>원하는 작품을 선택하면 카드 뒷면에서 작품내용을 확인할 수 있습니다.</span>
+        </p>
       </section>
 
       <section class="stage" id="stage" aria-label="작품 카드"></section>
@@ -543,15 +565,17 @@
         <button class="arrow" id="nextButton" type="button" aria-label="다음 작품">&gt;</button>
       </div>
 
-      <p class="story-summary" id="storySummary" aria-live="polite"></p>
+      <section class="selected-work" aria-live="polite">
+        <h2 id="selectedTitle"></h2>
+        <p id="selectedSynopsis"></p>
+      </section>
     </main>
 
     <footer class="footer">
       <span class="copyright">© 2026 🤎⋆ ˚｡⋆୨୧아몬드송송୨୧⋆｡˚ ⋆🤎 · ALL RIGHTS RESERVED</span>
       <div class="contacts">
-        <!-- 아래 주소를 실제 X 계정 주소로 바꿔주세요. -->
-        <a class="x-link" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X 계정">𝕏</a>
-        <!-- 아래 mailto: 뒤에 실제 이메일 주소를 입력해 주세요. -->
+        <a class="x-link" href="https://x.com/" target="_blank"
+           rel="noopener noreferrer" aria-label="X 계정">𝕏</a>
         <a class="mail-link" href="mailto:" aria-label="이메일 보내기">✉</a>
       </div>
     </footer>
@@ -559,16 +583,16 @@
 
   <script>
     /*
-      image: 표지 이미지의 직접 주소. 없으면 ""로 두세요.
-      channels의 url: 해당 작품을 볼 수 있는 채널의 실제 주소.
-      아직 주소가 없으면 ""로 두세요.
+      image: 작품 표지 이미지의 직접 주소.
+      channels의 url: 해당 플랫폼 작품 주소.
+      실제 주소가 없다면 빈 문자열로 두세요.
     */
     const works = [
       {
         title: "아래쪽은 다 압니다만",
         category: "의료 로맨스",
-        summary: "앙숙 의사들의 날카로운 만남",
-        description: "성운대 메디컬 센터에서 만난 두 의사의 앙숙 로맨스. 진료 방식은 다르지만 서로의 실력은 인정합니다.",
+        synopsis: "성운대 메디컬 센터에서 사사건건 부딪히는 산부인과 의사와 비뇨기과 의사. 서로의 실력만큼은 인정하는 두 사람이 협진을 거듭하며 가까워집니다.",
+        description: "성운대 메디컬 센터를 배경으로 한 전문직 앙숙 로맨스. 진료 방식과 성격이 맞지 않아 충돌하는 두 의사가 협진을 통해 서로를 새롭게 알아갑니다.",
         image: "",
         channels: [
           { name: "티키타", url: "" },
@@ -579,8 +603,8 @@
       {
         title: "최애가 나를 찾고 있다",
         category: "배우 × 작가",
-        summary: "내 소설을 읽는 최애 배우",
-        description: "얼굴 없는 작가 안개와 그녀의 소설을 읽어 온 톱배우. 숨겨진 정체를 사이에 두고 이야기가 시작됩니다.",
+        synopsis: "얼굴 없는 작가 ‘안개’의 소설을 공개 추천한 톱배우 도희상. 6년째 그를 좋아해 온 작가는 정체를 숨긴 채 그의 드라마 제작 현장에 들어갑니다.",
+        description: "필명 ‘안개’로 활동하는 작가는 도희상의 6년 차 팬입니다. 도희상은 안개의 열성 독자지만 그녀의 정체를 모릅니다. 두 사람은 드라마 대본 자문을 계기로 만나게 됩니다.",
         image: "",
         channels: [
           { name: "티키타", url: "" },
@@ -591,8 +615,8 @@
       {
         title: "현실에선 상극. 접속하면 절친 (남성향)",
         category: "캠퍼스 로코 · 남성향",
-        summary: "온라인 절친, 현실 상극",
-        description: "현실에서는 상극인 대학 동기. 게임에서는 서로의 정체를 모른 채 1년째 호흡을 맞춰 온 듀오입니다.",
+        synopsis: "대학에서는 마주치기만 해도 부딪히는 동기. 게임에서는 서로의 정체도 모른 채 1년째 완벽한 호흡을 자랑하는 절친 듀오입니다.",
+        description: "현실에서는 상극인 대학 동기 두 사람이 온라인 FPS 게임에서는 서로의 정체를 모른 채 오랫동안 듀오로 지내 왔습니다. 게임 밖에서 상대의 정체를 알게 되면서 관계가 흔들립니다.",
         image: "",
         channels: [
           { name: "티키타", url: "" },
@@ -602,8 +626,8 @@
       {
         title: "현실에선 상극. 접속하면 절친 (여성향)",
         category: "캠퍼스 로코 · 여성향",
-        summary: "온라인 절친, 현실 상극",
-        description: "현실에서는 상극이지만 게임에서는 친밀한 듀오가 된 두 사람의 이야기.",
+        synopsis: "현실에서는 사사건건 맞서는 대학 동기. 하지만 게임에 접속하면 누구보다 서로를 잘 아는 듀오가 됩니다.",
+        description: "서로를 못마땅해하는 두 대학 동기가 게임 속에서는 가장 믿음직한 파트너로 지내고 있습니다. 익숙한 목소리와 행동에서 서로의 정체를 의심하기 시작합니다.",
         image: "",
         channels: [
           { name: "티키타", url: "" }
@@ -612,8 +636,8 @@
       {
         title: "칼끝과 펜끝이 젖어 드는 밤",
         category: "셰프 × 리뷰어",
-        summary: "한 접시에서 시작된 이야기",
-        description: "셰프와 리뷰어가 한 접시의 요리를 계기로 만나는 이야기.",
+        synopsis: "한 접시의 요리를 두고 만난 셰프와 리뷰어. 날카로운 평가에서 시작된 관계가 서로의 진심을 알아가는 이야기로 이어집니다.",
+        description: "요리에 자부심이 강한 셰프와 날카로운 시선으로 글을 쓰는 리뷰어가 만납니다. 음식에 관한 의견 충돌은 두 사람이 서로를 깊이 들여다보는 계기가 됩니다.",
         image: "",
         channels: [
           { name: "티키타", url: "" }
@@ -630,7 +654,8 @@
 
     const stage = document.getElementById("stage");
     const counter = document.getElementById("counter");
-    const summary = document.getElementById("storySummary");
+    const selectedTitle = document.getElementById("selectedTitle");
+    const selectedSynopsis = document.getElementById("selectedSynopsis");
     const menuButton = document.getElementById("menuButton");
     const menuPanel = document.getElementById("menuPanel");
     const aboutButton = document.getElementById("aboutButton");
@@ -658,7 +683,7 @@
 
       if (work.image) {
         art.style.backgroundImage =
-          `linear-gradient(to top, rgba(0,0,0,.55), transparent 55%), url("${work.image.replaceAll('"', '%22')}")`;
+          `linear-gradient(to top, rgba(0,0,0,.55), transparent 55%), url("${work.image.replaceAll('"', "%22")}")`;
       }
 
       const coverTitle = document.createElement("span");
@@ -767,7 +792,11 @@
       counter.textContent =
         `${String(current + 1).padStart(2, "0")} / ${String(works.length).padStart(2, "0")}`;
 
-      summary.textContent = works[current].summary;
+      selectedTitle.textContent = works[current].title;
+
+      /* 마침표와 다음 문장 사이를 줄바꿈으로 변경 */
+      selectedSynopsis.textContent =
+        works[current].synopsis.replace(/([.!?])\s+/g, "$1\n");
     }
 
     document.getElementById("prevButton").addEventListener("click", () => {
@@ -785,14 +814,12 @@
     }, { passive: true });
 
     stage.addEventListener("touchend", event => {
-      const distance =
-        event.changedTouches[0].screenX - touchStartX;
+      const distance = event.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(distance) <= 40) return;
 
-      if (Math.abs(distance) > 40) {
-        current =
-          (current + (distance < 0 ? 1 : -1) + works.length) % works.length;
-        render();
-      }
+      current =
+        (current + (distance < 0 ? 1 : -1) + works.length) % works.length;
+      render();
     }, { passive: true });
 
     function closeMenu() {
