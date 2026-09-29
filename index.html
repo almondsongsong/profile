@@ -160,8 +160,6 @@ main{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:
 
 <script>
 const creatorLinks=[
-  {name:"개인페이지",url:"https://almondsongsong.github.io/profile/"},
-  {name:"트위터",url:"https://x.com/almondsongsong"},
   {name:"유니챗",url:"https://www.univers.chat/creator/2666362a-b2d1-4cbe-9a2d-cbd5c6bb1563"},
   {name:"크랙",url:"https://share.crack.wrtn.ai/95uap8g"},
   {name:"티키타",url:"https://tikita.ai/ko/creator/Z7272W"},
@@ -205,7 +203,7 @@ const works=[
     synopsis:"대학에서는 마주치기만 해도 부딪히는 동기. 게임에서는 서로의 정체도 모른 채 1년째 완벽한 호흡을 자랑하는 절친 듀오입니다.",
     description:"현실에서는 상극인 대학 동기 두 사람이 온라인 FPS 게임에서는 서로의 정체를 모른 채 오랫동안 듀오로 지내 왔습니다. 게임 밖에서 상대의 정체를 알게 되면서 관계가 흔들립니다.",
     image:"",
-    detailUrl:"https://almondsongsong.github.io/BATTLE-ATTACK/",
+    detailUrl:"https://almondsongsong.github.io/BATTLEATTACK/",
     channels:[
       {name:"티키타",url:"https://tikita.ai/ko/story/17JUNOZP?referrer=Z7272W"}
     ]
@@ -217,7 +215,7 @@ const works=[
     synopsis:"현실에서는 사사건건 맞서는 대학 동기. 하지만 게임에 접속하면 누구보다 서로를 잘 아는 듀오가 됩니다.",
     description:"서로를 못마땅해하는 두 대학 동기가 게임 속에서는 가장 믿음직한 파트너로 지내고 있습니다. 익숙한 목소리와 행동에서 서로의 정체를 의심하기 시작합니다.",
     image:"",
-    detailUrl:"https://almondsongsong.github.io/BATTLEATTACK/",
+    detailUrl:"https://almondsongsong.github.io/BATTLE-ATTACK/",
     channels:[
       {name:"티키타",url:"https://tikita.ai/ko/story/DC087T6T?referrer=Z7272W"}
     ]
@@ -242,7 +240,9 @@ const works=[
     description:"한유나가 강현욱의 옆집으로 이사 오며 재회합니다. 오래된 기억과 지금의 낯선 설렘 사이에서 두 사람의 거리가 조금씩 가까워집니다.",
     image:"",
     detailUrl:"https://almondsongsong.github.io/nextdoor/",
-    channels:[]
+    channels:[
+      {name:"티키타",url:"https://tikita.ai/ko/story/497LWE41"}
+    ]
   }
 ];
 
@@ -266,10 +266,28 @@ function setExternalLink(link,url){
   link.removeAttribute("rel");
 }
 
-creatorLinks.forEach(item=>{
+function makeDestinationLink(text,url,className,ariaLabel){
   const link=document.createElement("a");
-  link.textContent=item.name;
-  setExternalLink(link,item.url);
+  link.className=className;
+  link.textContent=text;
+  link.setAttribute("aria-label",ariaLabel);
+
+  if(url){
+    setExternalLink(link,url);
+  }else{
+    link.href="#";
+    link.addEventListener("click",event=>{
+      event.preventDefault();
+      alert("현재 준비중 입니다.");
+    });
+  }
+
+  link.addEventListener("click",event=>event.stopPropagation());
+  return link;
+}
+
+creatorLinks.forEach(item=>{
+  const link=makeDestinationLink(item.name,item.url,"",item.name+" 작가 페이지 보기");
   $("creatorLinks").append(link);
 });
 
@@ -306,14 +324,13 @@ function makeCard(work,index){
   channels.className="channels";
 
   work.channels.forEach(item=>{
-    if(!item.url)return;
-
-    const link=document.createElement("a");
-    link.textContent=item.name;
-    link.setAttribute("aria-label",item.name+"에서 "+work.title+" 보기");
+    const link=makeDestinationLink(
+      item.name,
+      item.url,
+      "",
+      item.name+"에서 "+work.title+" 보기"
+    );
     link.style.setProperty("--channel-color",colors[item.name]||"var(--accent)");
-    setExternalLink(link,item.url);
-    link.addEventListener("click",event=>event.stopPropagation());
     channels.append(link);
   });
 
@@ -329,35 +346,23 @@ function makeCard(work,index){
   const backTitle=document.createElement("strong");
   backTitle.textContent=work.title;
 
-  const detail=document.createElement("a");
-  detail.className="detail-link";
-  detail.textContent="자세히 보기";
-  detail.setAttribute("aria-label",work.title+" 자세히 보기");
-
-  if(work.detailUrl){
-    setExternalLink(detail,work.detailUrl);
-  }else{
-    detail.href="#";
-    detail.addEventListener("click",event=>{
-      event.preventDefault();
-      event.stopPropagation();
-      alert("현재 준비중 입니다.");
-    });
-  }
-
-  detail.addEventListener("click",event=>event.stopPropagation());
+  const detail=makeDestinationLink(
+    "자세히 보기",
+    work.detailUrl,
+    "detail-link",
+    work.title+" 자세히 보기"
+  );
 
   const description=document.createElement("p");
   description.textContent=work.description;
 
-  back.append(label,backTitle,detail,description);
-
   const tip=document.createElement("span");
   tip.className="back-tip";
   tip.textContent="카드를 다시 누르면 앞면으로 돌아갑니다";
-  back.append(tip);
 
+  back.append(label,backTitle,detail,description,tip);
   card.append(front,back);
+
   card.addEventListener("click",event=>{
     if(event.target.closest("a"))return;
     if(swiped){
