@@ -62,7 +62,8 @@ main{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:
 .card-back{justify-content:center;gap:13px;padding:20px}
 .card-back strong{font-size:18px;line-height:1.35;word-break:keep-all}
 .card-back p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
-.detail-link{align-self:flex-start;color:var(--accent);font-size:12px;text-underline-offset:4px}
+.detail-link{align-self:flex-start;padding:0;border:0;background:none;color:var(--accent);font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.detail-link:hover{color:var(--text)}
 .back-tip{margin-top:auto;color:var(--muted);font-size:10px}
 
 .controls{display:grid;grid-template-columns:44px 68px 44px;justify-content:center;align-items:center;column-gap:16px}
@@ -259,7 +260,6 @@ let current=0;
 let touchStartX=0;
 let swiped=false;
 
-/* 링크는 새 창을 열지 않고 현재 창에서 이동합니다. */
 function setExternalLink(link,url){
   link.href=url;
   link.removeAttribute("target");
@@ -313,11 +313,7 @@ function makeCard(work,index){
     link.setAttribute("aria-label",item.name+"에서 "+work.title+" 보기");
     link.style.setProperty("--channel-color",colors[item.name]||"var(--accent)");
     setExternalLink(link,item.url);
-
-    link.addEventListener("click",event=>{
-      event.stopPropagation();
-    });
-
+    link.addEventListener("click",event=>event.stopPropagation());
     channels.append(link);
   });
 
@@ -333,18 +329,28 @@ function makeCard(work,index){
   const backTitle=document.createElement("strong");
   backTitle.textContent=work.title;
 
-  const description=document.createElement("p");
-  description.textContent=work.description;
-  back.append(label,backTitle,description);
+  const detail=document.createElement("a");
+  detail.className="detail-link";
+  detail.textContent="자세히 보기";
+  detail.setAttribute("aria-label",work.title+" 자세히 보기");
 
   if(work.detailUrl){
-    const detail=document.createElement("a");
-    detail.className="detail-link";
-    detail.textContent="상세 페이지 보기 ↗";
     setExternalLink(detail,work.detailUrl);
-    detail.addEventListener("click",event=>event.stopPropagation());
-    back.append(detail);
+  }else{
+    detail.href="#";
+    detail.addEventListener("click",event=>{
+      event.preventDefault();
+      event.stopPropagation();
+      alert("현재 준비중 입니다.");
+    });
   }
+
+  detail.addEventListener("click",event=>event.stopPropagation());
+
+  const description=document.createElement("p");
+  description.textContent=work.description;
+
+  back.append(label,backTitle,detail,description);
 
   const tip=document.createElement("span");
   tip.className="back-tip";
