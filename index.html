@@ -1,897 +1,489 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>아몬드송송 | 작품 소개</title>
-  <style>
-    :root {
-      --bg: #191614;
-      --panel: #30251e;
-      --text: #f6eee4;
-      --muted: #baa999;
-      --accent: #d9ad83;
-      --edge: #604c3d;
-    }
-
-    :root[data-theme="light"] {
-      --bg: #f5efe7;
-      --panel: #fffaf4;
-      --text: #30231d;
-      --muted: #756458;
-      --accent: #8d5e3e;
-      --edge: #d7bda7;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      width: 100%;
-      min-width: 320px;
-      margin: 0;
-      background: var(--bg);
-    }
-
-    body {
-      color: var(--text);
-      font-family: Arial, "Noto Sans KR", sans-serif;
-    }
-
-    button { font: inherit; cursor: pointer; }
-
-    button:focus-visible, a:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-    }
-
-    .page {
-      width: min(100%, 1200px);
-      min-height: 100svh;
-      margin: 0 auto;
-      padding: 20px 24px 26px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header {
-      position: relative;
-      z-index: 20;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      min-height: 40px;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .header-icon {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 40px;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: var(--text);
-      line-height: 1;
-      text-decoration: none;
-    }
-
-    .header-icon:hover { color: var(--accent); }
-
-    .menu-button { font-size: 22px; }
-    .x-link { font-size: 21px; font-weight: 700; }
-    .mail-link { font-size: 24px; }
-    .theme-button { font-size: 23px; }
-
-    .menu-panel {
-      position: absolute;
-      top: 46px;
-      left: 0;
-      width: min(320px, calc(100vw - 32px));
-      max-height: min(75svh, 500px);
-      overflow-y: auto;
-      padding: 12px;
-      border: 1px solid var(--edge);
-      border-radius: 13px;
-      background: var(--panel);
-      box-shadow: 0 15px 35px #0007;
-    }
-
-    [hidden] { display: none !important; }
-
-    .menu-panel button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      border: 0;
-      border-radius: 7px;
-      background: transparent;
-      color: var(--text);
-      text-align: left;
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .menu-panel button:hover,
-    .menu-panel button:focus-visible {
-      background: var(--bg);
-      color: var(--accent);
-    }
-
-    .about-copy {
-      padding: 4px 10px 12px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .menu-work-list button { padding-left: 20px; }
-
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-width: 0;
-    }
-
-    .heading {
-      margin: 18px 0 0;
-      text-align: center;
-    }
-
-    .heading small {
-      color: var(--accent);
-      font-size: 11px;
-      letter-spacing: 2px;
-    }
-
-    .heading h1 {
-      margin: 9px 0;
-      font-size: clamp(23px, 4vw, 29px);
-      letter-spacing: -1px;
-      word-break: keep-all;
-    }
-
-    .heading p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-      word-break: keep-all;
-    }
-
-    .heading p span { display: block; }
-
-    .stage {
-      --card-width: clamp(225px, 27vw, 310px);
-      --card-height: clamp(332px, 39vw, 450px);
-      position: relative;
-      height: calc(var(--card-height) + 68px);
-      user-select: none;
-      touch-action: pan-y;
-      perspective: 1200px;
-    }
-
-    .story-card {
-      position: absolute;
-      top: 24px;
-      left: 50%;
-      z-index: 1;
-      width: var(--card-width);
-      height: var(--card-height);
-      margin-left: calc(var(--card-width) / -2);
-      border: 0;
-      padding: 0;
-      background: transparent;
-      color: var(--text);
-      text-align: left;
-      transform-style: preserve-3d;
-      transition: transform .55s cubic-bezier(.2,.7,.2,1),
-                  opacity .55s, filter .55s;
-    }
-
-    .story-card[data-distance="0"] {
-      z-index: 8;
-      transform: translateX(0) scale(1);
-      opacity: 1;
-    }
-
-    .story-card[data-distance="-1"] {
-      z-index: 7;
-      transform: translateX(calc(var(--card-width) * -.68)) scale(.88);
-      filter: brightness(.63);
-    }
-
-    .story-card[data-distance="1"] {
-      z-index: 7;
-      transform: translateX(calc(var(--card-width) * .68)) scale(.88);
-      filter: brightness(.63);
-    }
-
-    .story-card[data-distance="-2"] {
-      z-index: 6;
-      transform: translateX(calc(var(--card-width) * -1.12)) scale(.73);
-      filter: brightness(.42);
-    }
-
-    .story-card[data-distance="2"] {
-      z-index: 6;
-      transform: translateX(calc(var(--card-width) * 1.12)) scale(.73);
-      filter: brightness(.42);
-    }
-
-    .story-card[data-distance="hidden"] {
-      opacity: 0;
-      pointer-events: none;
-      transform: scale(.4);
-    }
-
-    .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transition: transform .55s ease;
-    }
-
-    .story-card.flipped .card-inner { transform: rotateY(180deg); }
-
-    .card-face {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border: 1px solid var(--edge);
-      border-radius: 15px;
-      background: var(--panel);
-      backface-visibility: hidden;
-      box-shadow: 0 20px 35px #0005;
-    }
-
-    .card-art {
-      position: relative;
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      align-items: flex-end;
-      padding: 18px;
-      background: linear-gradient(145deg, #8c6a52, #50362c 48%, #221b1b);
-      background-size: cover;
-      background-position: center;
-    }
-
-    .story-card:nth-child(4n+2) .card-art {
-      background-color: #513d48;
-    }
-
-    .story-card:nth-child(4n+3) .card-art {
-      background-color: #373f63;
-    }
-
-    .story-card:nth-child(4n+4) .card-art {
-      background-color: #58443a;
-    }
-
-    .cover-title {
-      position: relative;
-      z-index: 1;
-      color: #fff1e6;
-      font: italic clamp(16px, 1.9vw, 21px)/1.35 Georgia, serif;
-      text-shadow: 0 1px 8px #0009;
-      word-break: keep-all;
-    }
-
-    .card-caption {
-      min-height: 103px;
-      padding: 13px 15px;
-    }
-
-    .card-caption small,
-    .card-back small {
-      color: var(--accent);
-      font-size: 10px;
-    }
-
-    .card-caption strong {
-      display: block;
-      margin-top: 5px;
-      font-size: 13px;
-      line-height: 1.35;
-      word-break: keep-all;
-    }
-
-    .channels {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 9px;
-    }
-
-    .channels a {
-      padding: 5px 8px;
-      border: 1px solid var(--channel-color);
-      border-radius: 15px;
-      background: transparent;
-      color: var(--text);
-      font-size: 10px;
-      line-height: 1.2;
-      text-decoration: none;
-    }
-
-    .channels a:hover {
-      background: var(--channel-color);
-      color: #fff;
-    }
-
-    .card-back {
-      transform: rotateY(180deg);
-      justify-content: center;
-      gap: 13px;
-      padding: 20px;
-    }
-
-    .card-back strong {
-      font-size: 18px;
-      line-height: 1.35;
-      word-break: keep-all;
-    }
-
-    .card-back p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .back-tip {
-      margin-top: auto;
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 44px 68px 44px;
-      justify-content: center;
-      align-items: center;
-      column-gap: 16px;
-    }
-
-    .arrow {
-      display: grid;
-      place-items: center;
-      width: 44px;
-      height: 44px;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      font: 400 23px/1 Arial, sans-serif;
-    }
-
-    .arrow:hover { color: var(--text); }
-
-    .counter {
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .selected-work {
-      min-height: 84px;
-      max-width: 620px;
-      margin: 9px auto 0;
-      text-align: center;
-      word-break: keep-all;
-    }
-
-    .selected-work h2 {
-      margin: 0 0 7px;
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.45;
-    }
-
-    .selected-work p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.65;
-      white-space: pre-line;
-    }
-
-    /* 가운데 정렬한 저작권 안내 */
-    .footer {
-      width: 100%;
-      margin-top: 22px;
-      padding: 18px 12px 0;
-      border-top: 1px solid var(--edge);
-      text-align: center;
-      word-break: keep-all;
-    }
-
-    .footer-heading {
-      margin: 0 0 8px;
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .16em;
-    }
-
-    .footer-copyright {
-      margin: 0 0 11px;
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    .footer-notice {
-      margin: 0;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.7;
-    }
-
-    .footer-credit {
-      margin: 12px 0 0;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 600px) {
-      .page { padding: 17px 12px 22px; }
-
-      .heading { margin-top: 18px; }
-      .heading p { font-size: 12px; }
-
-      .stage {
-        --card-width: 218px;
-        --card-height: 365px;
-        height: 412px;
-      }
-
-      .story-card { top: 12px; }
-
-      .story-card[data-distance="-1"] {
-        transform: translateX(-107px) scale(.87);
-      }
-
-      .story-card[data-distance="1"] {
-        transform: translateX(107px) scale(.87);
-      }
-
-      .story-card[data-distance="-2"] {
-        transform: translateX(-165px) scale(.7);
-      }
-
-      .story-card[data-distance="2"] {
-        transform: translateX(165px) scale(.7);
-      }
-
-      .card-art { padding: 15px; }
-      .cover-title { font-size: 14px; }
-
-      .card-caption {
-        min-height: 92px;
-        padding: 10px 12px;
-      }
-
-      .card-caption strong { font-size: 12px; }
-      .card-back { padding: 14px; }
-      .card-back strong { font-size: 15px; }
-
-      .selected-work {
-        min-height: 105px;
-        padding: 0 10px;
-      }
-
-      .selected-work h2 { font-size: 14px; }
-      .selected-work p { font-size: 12px; }
-
-      .footer { padding-inline: 2px; }
-      .footer-credit { overflow-wrap: anywhere; }
-    }
-
-    @media (max-width: 380px) {
-      .story-card[data-distance="-1"] {
-        transform: translateX(-100px) scale(.87);
-      }
-
-      .story-card[data-distance="1"] {
-        transform: translateX(100px) scale(.87);
-      }
-
-      .footer-notice br { display: none; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .story-card, .card-inner { transition: none; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>아몬드송송 | 작품 소개</title>
+<style>
+:root{--bg:#191614;--panel:#30251e;--text:#f6eee4;--muted:#baa999;--accent:#d9ad83;--edge:#604c3d}
+:root[data-theme="light"]{--bg:#f5efe7;--panel:#fffaf4;--text:#30231d;--muted:#756458;--accent:#8d5e3e;--edge:#d7bda7}
+*{box-sizing:border-box}
+html,body{margin:0;min-width:320px;background:var(--bg)}
+body{color:var(--text);font-family:Arial,"Noto Sans KR",sans-serif}
+button{font:inherit;cursor:pointer}
+a,button{-webkit-tap-highlight-color:transparent}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+[hidden]{display:none!important}
+
+.page{width:min(100%,1200px);min-height:100svh;margin:auto;padding:20px 24px 26px;display:flex;flex-direction:column}
+.header{position:relative;z-index:20;display:flex;justify-content:space-between;align-items:center;width:100%;min-height:40px}
+.header-actions{display:flex;gap:6px;align-items:center}
+.header-icon{display:grid;place-items:center;width:38px;height:40px;padding:0;border:0;background:transparent;color:var(--text);line-height:1;text-decoration:none}
+.header-icon:hover{color:var(--accent)}
+.menu-button{font-size:22px}
+.x-link{font-size:21px;font-weight:700}
+.mail-link{font-size:24px}
+.theme-button{font-size:23px}
+.menu-panel{position:absolute;top:46px;left:0;width:min(340px,calc(100vw - 32px));max-height:min(75svh,550px);overflow-y:auto;padding:12px;border:1px solid var(--edge);border-radius:13px;background:var(--panel);box-shadow:0 15px 35px #0007}
+.menu-panel button,.menu-panel a{display:block;width:100%;padding:10px;border:0;border-radius:7px;background:transparent;color:var(--text);text-align:left;font-size:12px;line-height:1.45;text-decoration:none}
+.menu-panel button:hover,.menu-panel button:focus-visible,.menu-panel a:hover,.menu-panel a:focus-visible{background:var(--bg);color:var(--accent)}
+.about-copy{padding:4px 10px 12px;color:var(--muted);font-size:12px;line-height:1.6}
+.creator-links{padding-left:10px}
+.creator-links a{padding:7px 10px}
+.menu-work-list button{padding-left:20px}
+
+main{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.heading{margin:18px 0 0;text-align:center}
+.heading small{color:var(--accent);font-size:11px;letter-spacing:2px}
+.heading h1{margin:9px 0;font-size:clamp(23px,4vw,29px);letter-spacing:-1px;word-break:keep-all}
+.heading p{margin:0;color:var(--muted);font-size:13px;line-height:1.7;word-break:keep-all}
+.heading p span{display:block}
+
+.stage{--card-width:clamp(225px,27vw,310px);--card-height:clamp(332px,39vw,450px);position:relative;height:calc(var(--card-height) + 68px);user-select:none;touch-action:pan-y}
+.story-card{position:absolute;top:24px;left:50%;z-index:1;width:var(--card-width);height:var(--card-height);margin-left:calc(var(--card-width)/-2);color:var(--text);text-align:left;transition:transform .55s cubic-bezier(.2,.7,.2,1),opacity .55s,filter .55s}
+.story-card[data-distance="0"]{z-index:8;transform:translateX(0) scale(1);opacity:1}
+.story-card[data-distance="-1"]{z-index:7;transform:translateX(calc(var(--card-width)*-.68)) scale(.88);filter:brightness(.63)}
+.story-card[data-distance="1"]{z-index:7;transform:translateX(calc(var(--card-width)*.68)) scale(.88);filter:brightness(.63)}
+.story-card[data-distance="-2"]{z-index:6;transform:translateX(calc(var(--card-width)*-1.12)) scale(.73);filter:brightness(.42)}
+.story-card[data-distance="2"]{z-index:6;transform:translateX(calc(var(--card-width)*1.12)) scale(.73);filter:brightness(.42)}
+.story-card[data-distance="hidden"]{opacity:0;pointer-events:none;transform:scale(.4)}
+.card-face{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--edge);border-radius:15px;background:var(--panel);box-shadow:0 20px 35px #0005;cursor:pointer}
+.card-back,.story-card.flipped .card-front{display:none}
+.story-card.flipped .card-back{display:flex}
+
+.card-art{position:relative;flex:1;min-height:0;display:flex;align-items:flex-end;padding:18px;background:linear-gradient(145deg,#8c6a52,#50362c 48%,#221b1b);background-size:cover;background-position:center}
+.cover-title{z-index:1;color:#fff1e6;font:italic clamp(16px,1.9vw,21px)/1.35 Georgia,serif;text-shadow:0 1px 8px #0009;word-break:keep-all}
+.card-caption{min-height:103px;padding:13px 15px}
+.card-caption small,.card-back small{color:var(--accent);font-size:10px}
+.card-caption strong{display:block;margin-top:5px;font-size:13px;line-height:1.35;word-break:keep-all}
+.channels{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.channels a{position:relative;z-index:2;display:inline-flex;align-items:center;padding:5px 8px;border:1px solid var(--channel-color);border-radius:15px;background:transparent;color:var(--text);font-size:10px;line-height:1.2;text-decoration:none;cursor:pointer;touch-action:manipulation}
+.channels a:hover{background:var(--channel-color);color:#fff}
+.card-back{justify-content:center;gap:13px;padding:20px}
+.card-back strong{font-size:18px;line-height:1.35;word-break:keep-all}
+.card-back p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.detail-link{align-self:flex-start;color:var(--accent);font-size:12px;text-underline-offset:4px}
+.back-tip{margin-top:auto;color:var(--muted);font-size:10px}
+
+.controls{display:grid;grid-template-columns:44px 68px 44px;justify-content:center;align-items:center;column-gap:16px}
+.arrow{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;color:var(--muted);font:400 23px/1 Arial,sans-serif}
+.arrow:hover{color:var(--text)}
+.counter{color:var(--muted);font-size:13px;text-align:center;font-variant-numeric:tabular-nums}
+.selected-work{min-height:84px;max-width:620px;margin:9px auto 0;text-align:center;word-break:keep-all}
+.selected-work h2{margin:0 0 7px;color:var(--text);font-size:16px;line-height:1.45}
+.selected-work p{margin:0;color:var(--muted);font-size:13px;line-height:1.65;white-space:pre-line}
+
+.footer{width:100%;margin-top:22px;padding:18px 12px 0;border-top:1px solid var(--edge);text-align:center;word-break:keep-all}
+.footer-heading{margin:0 0 8px;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.16em}
+.footer-copyright{margin:0 0 11px;color:var(--text);font-size:12px;font-weight:700;line-height:1.5}
+.footer-notice{margin:0;color:var(--muted);font-size:11px;line-height:1.7}
+.footer-credit{margin:12px 0 0;color:var(--muted);font-size:11px;line-height:1.6}
+
+@media(max-width:600px){
+  .page{padding:17px 12px 22px}
+  .heading p{font-size:12px}
+  .stage{--card-width:218px;--card-height:365px;height:412px}
+  .story-card{top:12px}
+  .story-card[data-distance="-1"]{transform:translateX(-107px) scale(.87)}
+  .story-card[data-distance="1"]{transform:translateX(107px) scale(.87)}
+  .story-card[data-distance="-2"]{transform:translateX(-165px) scale(.7)}
+  .story-card[data-distance="2"]{transform:translateX(165px) scale(.7)}
+  .card-art{padding:15px}
+  .cover-title{font-size:14px}
+  .card-caption{min-height:92px;padding:10px 12px}
+  .card-caption strong{font-size:12px}
+  .card-back{padding:14px}
+  .card-back strong{font-size:15px}
+  .selected-work{min-height:105px;padding:0 10px}
+  .selected-work h2{font-size:14px}
+  .selected-work p{font-size:12px}
+  .footer{padding-inline:2px}
+  .footer-credit{overflow-wrap:anywhere}
+}
+@media(max-width:380px){
+  .story-card[data-distance="-1"]{transform:translateX(-100px) scale(.87)}
+  .story-card[data-distance="1"]{transform:translateX(100px) scale(.87)}
+  .footer-notice br{display:none}
+}
+@media(prefers-reduced-motion:reduce){.story-card{transition:none}}
+</style>
 </head>
 <body>
-  <div class="page">
-    <header class="header">
-      <!-- 왼쪽: 페이지 메뉴 -->
-      <button class="header-icon menu-button" id="menuButton"
-              type="button" aria-label="페이지 메뉴"
-              aria-expanded="false" aria-controls="menuPanel">☰</button>
-
-      <!-- 오른쪽: X / 메일 / 테마 -->
-      <nav class="header-actions" aria-label="연락처 및 화면 설정">
-        <!-- 실제 X 계정 주소로 변경 -->
-        <a class="header-icon x-link" href="https://x.com/"
-           target="_blank" rel="noopener noreferrer" aria-label="X 계정">𝕏</a>
-
-        <!-- mailto: 뒤에 실제 이메일 주소 입력 -->
-        <a class="header-icon mail-link" href="mailto:"
-           aria-label="이메일 보내기">✉</a>
-
-        <button class="header-icon theme-button" id="themeButton"
-                type="button" aria-label="라이트 모드로 변경">◐</button>
-      </nav>
-
-      <div class="menu-panel" id="menuPanel" hidden>
-        <button id="aboutButton" type="button" aria-expanded="false">작가 소개</button>
-        <div class="about-copy" id="aboutCopy" hidden>
-          대화하며 완성하는 로맨스와 캐릭터 이야기를 만드는
-          AI 채팅 크리에이터, 아몬드송송입니다.
-        </div>
-
-        <button id="worksButton" type="button" aria-expanded="false">작품 소개</button>
-        <div class="menu-work-list" id="menuWorkList" hidden></div>
+<div class="page">
+  <header class="header">
+    <button class="header-icon menu-button" id="menuButton" type="button" aria-label="페이지 메뉴" aria-expanded="false" aria-controls="menuPanel">☰</button>
+    <nav class="header-actions" aria-label="연락처 및 화면 설정">
+      <a class="header-icon x-link" href="https://x.com/almondsongsong" aria-label="아몬드송송 X 계정">𝕏</a>
+      <a class="header-icon mail-link" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=almondsongsong%40gmail.com" aria-label="아몬드송송에게 이메일 보내기" title="almondsongsong@gmail.com">✉</a>
+      <button class="header-icon theme-button" id="themeButton" type="button" aria-label="라이트 모드로 변경">◐</button>
+    </nav>
+    <div class="menu-panel" id="menuPanel" hidden>
+      <button id="aboutButton" type="button" aria-expanded="false">작가 소개</button>
+      <div class="about-copy" id="aboutCopy" hidden>
+        대화하며 완성하는 로맨스와 캐릭터 이야기를 만드는 AI 채팅 크리에이터, 아몬드송송입니다.
+        <div class="creator-links" id="creatorLinks"></div>
       </div>
-    </header>
+      <button id="worksButton" type="button" aria-expanded="false">작품 소개</button>
+      <div class="menu-work-list" id="menuWorkList" hidden></div>
+    </div>
+  </header>
 
-    <main>
-      <section class="heading">
-        <small>STORIES YOU CAN STEP INTO</small>
-        <h1>어떤 이야기의 주인공이 되어볼까요?</h1>
-        <p>
-          <span>카드를 넘겨 작품을 골라보세요.</span>
-          <span>원하는 작품을 선택하면 카드 뒷면에서 작품내용을 확인할 수 있습니다.</span>
-        </p>
-      </section>
-
-      <section class="stage" id="stage" aria-label="작품 카드"></section>
-
-      <div class="controls">
-        <button class="arrow" id="prevButton" type="button" aria-label="이전 작품">&lt;</button>
-        <span class="counter" id="counter" aria-live="polite"></span>
-        <button class="arrow" id="nextButton" type="button" aria-label="다음 작품">&gt;</button>
-      </div>
-
-      <section class="selected-work" aria-live="polite">
-        <h2 id="selectedTitle"></h2>
-        <p id="selectedSynopsis"></p>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <p class="footer-heading">COPYRIGHT NOTICE</p>
-      <p class="footer-copyright">© 2026 아몬드송송 · ALL RIGHTS RESERVED</p>
-      <p class="footer-notice">
-        본 작품의 세계관·캐릭터 설정·스토리·창작 요소 및<br>
-        HTML 구조 · 레이아웃 · 디자인의<br>
-        무단 복제, 도용, 변형 및 재배포를 금합니다.
+  <main>
+    <section class="heading">
+      <small>STORIES YOU CAN STEP INTO</small>
+      <h1>어떤 이야기의 주인공이 되어볼까요?</h1>
+      <p>
+        <span>카드를 넘겨 작품을 골라보세요.</span>
+        <span>원하는 작품을 선택하면 카드 뒷면에서 작품내용을 확인할 수 있습니다.</span>
       </p>
-      <p class="footer-credit">
-        Original Story &amp; Creative Design by
-        🤎⋆ ˚｡⋆୨୧아몬드송송୨୧⋆｡˚ ⋆🤎
-      </p>
-    </footer>
-  </div>
+    </section>
+    <section class="stage" id="stage" aria-label="작품 카드"></section>
+    <div class="controls">
+      <button class="arrow" id="prevButton" type="button" aria-label="이전 작품">&lt;</button>
+      <span class="counter" id="counter" aria-live="polite"></span>
+      <button class="arrow" id="nextButton" type="button" aria-label="다음 작품">&gt;</button>
+    </div>
+    <section class="selected-work" aria-live="polite">
+      <h2 id="selectedTitle"></h2>
+      <p id="selectedSynopsis"></p>
+    </section>
+  </main>
 
-  <script>
-    /*
-      image: 작품 표지 이미지의 직접 주소.
-      channels의 url: 해당 플랫폼 작품 주소.
-      실제 주소가 없다면 빈 문자열로 두세요.
-    */
-    const works = [
-      {
-        title: "아래쪽은 다 압니다만",
-        category: "의료 로맨스",
-        synopsis: "성운대 메디컬 센터에서 사사건건 부딪히는 산부인과 의사와 비뇨기과 의사. 서로의 실력만큼은 인정하는 두 사람이 협진을 거듭하며 가까워집니다.",
-        description: "성운대 메디컬 센터를 배경으로 한 전문직 앙숙 로맨스. 진료 방식과 성격이 맞지 않아 충돌하는 두 의사가 협진을 통해 서로를 새롭게 알아갑니다.",
-        image: "",
-        channels: [
-          { name: "티키타", url: "" },
-          { name: "케이브덕", url: "" },
-          { name: "크랙", url: "" }
-        ]
-      },
-      {
-        title: "최애가 나를 찾고 있다",
-        category: "배우 × 작가",
-        synopsis: "얼굴 없는 작가 ‘안개’의 소설을 공개 추천한 톱배우 도희상. 6년째 그를 좋아해 온 작가는 정체를 숨긴 채 그의 드라마 제작 현장에 들어갑니다.",
-        description: "필명 ‘안개’로 활동하는 작가는 도희상의 6년 차 팬입니다. 도희상은 안개의 열성 독자지만 그녀의 정체를 모릅니다. 두 사람은 드라마 대본 자문을 계기로 만나게 됩니다.",
-        image: "",
-        channels: [
-          { name: "티키타", url: "" },
-          { name: "유니챗", url: "" },
-          { name: "케이브덕", url: "" }
-        ]
-      },
-      {
-        title: "현실에선 상극. 접속하면 절친 (남성향)",
-        category: "캠퍼스 로코 · 남성향",
-        synopsis: "대학에서는 마주치기만 해도 부딪히는 동기. 게임에서는 서로의 정체도 모른 채 1년째 완벽한 호흡을 자랑하는 절친 듀오입니다.",
-        description: "현실에서는 상극인 대학 동기 두 사람이 온라인 FPS 게임에서는 서로의 정체를 모른 채 오랫동안 듀오로 지내 왔습니다. 게임 밖에서 상대의 정체를 알게 되면서 관계가 흔들립니다.",
-        image: "",
-        channels: [
-          { name: "티키타", url: "" },
-          { name: "케이브덕", url: "" }
-        ]
-      },
-      {
-        title: "현실에선 상극. 접속하면 절친 (여성향)",
-        category: "캠퍼스 로코 · 여성향",
-        synopsis: "현실에서는 사사건건 맞서는 대학 동기. 하지만 게임에 접속하면 누구보다 서로를 잘 아는 듀오가 됩니다.",
-        description: "서로를 못마땅해하는 두 대학 동기가 게임 속에서는 가장 믿음직한 파트너로 지내고 있습니다. 익숙한 목소리와 행동에서 서로의 정체를 의심하기 시작합니다.",
-        image: "",
-        channels: [
-          { name: "티키타", url: "" }
-        ]
-      },
-      {
-        title: "칼끝과 펜끝이 젖어 드는 밤",
-        category: "셰프 × 리뷰어",
-        synopsis: "한 접시의 요리를 두고 만난 셰프와 리뷰어. 날카로운 평가에서 시작된 관계가 서로의 진심을 알아가는 이야기로 이어집니다.",
-        description: "요리에 자부심이 강한 셰프와 날카로운 시선으로 글을 쓰는 리뷰어가 만납니다. 음식에 관한 의견 충돌은 두 사람이 서로를 깊이 들여다보는 계기가 됩니다.",
-        image: "",
-        channels: [
-          { name: "티키타", url: "" }
-        ]
-      }
-    ];
+  <footer class="footer">
+    <p class="footer-heading">COPYRIGHT NOTICE</p>
+    <p class="footer-copyright">© 2026 아몬드송송 · ALL RIGHTS RESERVED</p>
+    <p class="footer-notice">본 작품의 세계관·캐릭터 설정·스토리·창작 요소 및<br>HTML 구조 · 레이아웃 · 디자인의<br>무단 복제, 도용, 변형 및 재배포를 금합니다.</p>
+    <p class="footer-credit">Original Story &amp; Creative Design by 🤎⋆ ˚｡⋆୨୧아몬드송송୨୧⋆｡˚ ⋆🤎</p>
+  </footer>
+</div>
 
-    const channelColors = {
-      "티키타": "#4E42FF",
-      "유니챗": "#FB7185",
-      "크랙": "#FF3D33",
-      "케이브덕": "#EDA71C"
-    };
+<script>
+const creatorLinks=[
+  {name:"개인페이지",url:"https://almondsongsong.github.io/profile/"},
+  {name:"트위터",url:"https://x.com/almondsongsong"},
+  {name:"유니챗",url:"https://www.univers.chat/creator/2666362a-b2d1-4cbe-9a2d-cbd5c6bb1563"},
+  {name:"크랙",url:"https://share.crack.wrtn.ai/95uap8g"},
+  {name:"티키타",url:"https://tikita.ai/ko/creator/Z7272W"},
+  {name:"케이브덕",url:"https://caveduck.io/ko/user/amondsongsong"}
+];
 
-    const stage = document.getElementById("stage");
-    const counter = document.getElementById("counter");
-    const selectedTitle = document.getElementById("selectedTitle");
-    const selectedSynopsis = document.getElementById("selectedSynopsis");
-    const menuButton = document.getElementById("menuButton");
-    const menuPanel = document.getElementById("menuPanel");
-    const aboutButton = document.getElementById("aboutButton");
-    const aboutCopy = document.getElementById("aboutCopy");
-    const worksButton = document.getElementById("worksButton");
-    const menuWorkList = document.getElementById("menuWorkList");
-    const themeButton = document.getElementById("themeButton");
+const works=[
+  {
+    title:"아래쪽은 다 압니다만",
+    category:"의료 로맨스",
+    date:"2026.09.24",
+    synopsis:"성운대 메디컬 센터에서 사사건건 부딪히는 산부인과 의사와 비뇨기과 의사. 서로의 실력만큼은 인정하는 두 사람이 협진을 거듭하며 가까워집니다.",
+    description:"성운대 메디컬 센터를 배경으로 한 전문직 앙숙 로맨스. 진료 방식과 성격이 맞지 않아 충돌하는 두 의사가 협진을 통해 서로를 새롭게 알아갑니다.",
+    image:"",
+    detailUrl:"https://almondsongsong.github.io/medical/",
+    channels:[
+      {name:"유니챗",url:"https://www.univers.chat/character/0d3dd5a0-578f-4964-93fb-5b7cbcfbd1d9"},
+      {name:"크랙",url:"https://share.crack.wrtn.ai/au1kor"},
+      {name:"티키타",url:"https://tikita.ai/ko/story/NTFMLUDK?referrer=Z7272W"}
+    ]
+  },
+  {
+    title:"최애가 나를 찾고 있다",
+    category:"배우 × 작가",
+    date:"2026.09.26",
+    synopsis:"얼굴 없는 작가 ‘안개’의 소설을 공개 추천한 톱배우 도희상. 6년째 그를 좋아해 온 작가는 정체를 숨긴 채 그의 드라마 제작 현장에 들어갑니다.",
+    description:"필명 ‘안개’로 활동하는 작가는 도희상의 6년 차 팬입니다. 도희상은 안개의 열성 독자지만 그녀의 정체를 모릅니다. 두 사람은 드라마 대본 자문을 계기로 만나게 됩니다.",
+    image:"",
+    detailUrl:"https://almondsongsong.github.io/unichat-page/",
+    channels:[
+      {name:"유니챗",url:"https://www.univers.chat/character/fb512b9d-8088-4f0c-a290-7222f9cc754b"},
+      {name:"크랙",url:"https://share.crack.wrtn.ai/0vx6bfas"},
+      {name:"티키타",url:"https://tikita.ai/ko/story/N5L498B0?referrer=Z7272W"},
+      {name:"케이브덕",url:"https://ko.cvdk.io/c/s7Gg42RJSP-EV-U3eNfH5Q?rc=gwSjCGhhIY"}
+    ]
+  },
+  {
+    title:"현실에선 상극. 접속하면 절친 (남성향)",
+    category:"캠퍼스 로코 · 남성향",
+    date:"2026.09.27",
+    synopsis:"대학에서는 마주치기만 해도 부딪히는 동기. 게임에서는 서로의 정체도 모른 채 1년째 완벽한 호흡을 자랑하는 절친 듀오입니다.",
+    description:"현실에서는 상극인 대학 동기 두 사람이 온라인 FPS 게임에서는 서로의 정체를 모른 채 오랫동안 듀오로 지내 왔습니다. 게임 밖에서 상대의 정체를 알게 되면서 관계가 흔들립니다.",
+    image:"",
+    detailUrl:"https://almondsongsong.github.io/BATTLE-ATTACK/",
+    channels:[
+      {name:"티키타",url:"https://tikita.ai/ko/story/17JUNOZP?referrer=Z7272W"}
+    ]
+  },
+  {
+    title:"현실에선 상극. 접속하면 절친 (여성향)",
+    category:"캠퍼스 로코 · 여성향",
+    date:"2026.09.28",
+    synopsis:"현실에서는 사사건건 맞서는 대학 동기. 하지만 게임에 접속하면 누구보다 서로를 잘 아는 듀오가 됩니다.",
+    description:"서로를 못마땅해하는 두 대학 동기가 게임 속에서는 가장 믿음직한 파트너로 지내고 있습니다. 익숙한 목소리와 행동에서 서로의 정체를 의심하기 시작합니다.",
+    image:"",
+    detailUrl:"https://almondsongsong.github.io/BATTLEATTACK/",
+    channels:[
+      {name:"티키타",url:"https://tikita.ai/ko/story/DC087T6T?referrer=Z7272W"}
+    ]
+  },
+  {
+    title:"칼끝과 펜끝이 젖어 드는 밤",
+    category:"셰프 × 리뷰어",
+    date:"2026.09.29",
+    synopsis:"한 접시의 요리를 두고 만난 셰프와 리뷰어. 날카로운 평가에서 시작된 관계가 서로의 진심을 알아가는 이야기로 이어집니다.",
+    description:"요리에 자부심이 강한 셰프와 날카로운 시선으로 글을 쓰는 리뷰어가 만납니다. 음식에 관한 의견 충돌은 두 사람이 서로를 깊이 들여다보는 계기가 됩니다.",
+    image:"",
+    detailUrl:"",
+    channels:[
+      {name:"티키타",url:"https://tikita.ai/ko/story/BWHH7E46?referrer=Z7272W"}
+    ]
+  },
+  {
+    title:"옆집 문이 닫히기 전에",
+    category:"이웃 로맨스",
+    date:"2026.09.29",
+    synopsis:"어린 시절 알고 지낸 두 사람이 성인이 되어 옆집 이웃으로 다시 만납니다. 닫힌 문 하나를 사이에 두고 익숙했던 관계가 조금씩 달라집니다.",
+    description:"한유나가 강현욱의 옆집으로 이사 오며 재회합니다. 오래된 기억과 지금의 낯선 설렘 사이에서 두 사람의 거리가 조금씩 가까워집니다.",
+    image:"",
+    detailUrl:"https://almondsongsong.github.io/nextdoor/",
+    channels:[]
+  }
+];
 
-    let current = 0;
-    let touchStartX = 0;
+const colors={
+  "티키타":"#4E42FF",
+  "유니챗":"#FB7185",
+  "크랙":"#FF3D33",
+  "케이브덕":"#EDA71C"
+};
 
-    function makeCard(work, index) {
-      const card = document.createElement("article");
-      card.className = "story-card";
-      card.setAttribute("aria-label", work.title + " 작품 카드");
+const $=id=>document.getElementById(id);
+const stage=$("stage");
+const menu=$("menuPanel");
+let current=0;
+let touchStartX=0;
+let swiped=false;
 
-      const inner = document.createElement("div");
-      inner.className = "card-inner";
+/* 링크는 새 창을 열지 않고 현재 창에서 이동합니다. */
+function setExternalLink(link,url){
+  link.href=url;
+  link.removeAttribute("target");
+  link.removeAttribute("rel");
+}
 
-      const front = document.createElement("div");
-      front.className = "card-face card-front";
+creatorLinks.forEach(item=>{
+  const link=document.createElement("a");
+  link.textContent=item.name;
+  setExternalLink(link,item.url);
+  $("creatorLinks").append(link);
+});
 
-      const art = document.createElement("div");
-      art.className = "card-art";
+function makeCard(work,index){
+  const card=document.createElement("article");
+  card.className="story-card";
+  card.setAttribute("aria-label",work.title+" 작품 카드");
 
-      if (work.image) {
-        art.style.backgroundImage =
-          `linear-gradient(to top, rgba(0,0,0,.55), transparent 55%), url("${work.image.replaceAll('"', "%22")}")`;
-      }
+  const front=document.createElement("div");
+  front.className="card-face card-front";
 
-      const coverTitle = document.createElement("span");
-      coverTitle.className = "cover-title";
-      coverTitle.textContent = work.title;
-      art.appendChild(coverTitle);
+  const art=document.createElement("div");
+  art.className="card-art";
+  if(work.image){
+    art.style.backgroundImage=
+      `linear-gradient(to top,rgba(0,0,0,.55),transparent 55%),url("${work.image.replaceAll('"',"%22")}")`;
+  }
 
-      const caption = document.createElement("div");
-      caption.className = "card-caption";
+  const cover=document.createElement("span");
+  cover.className="cover-title";
+  cover.textContent=work.title;
+  art.append(cover);
 
-      const category = document.createElement("small");
-      category.textContent = work.category;
+  const caption=document.createElement("div");
+  caption.className="card-caption";
 
-      const title = document.createElement("strong");
-      title.textContent = work.title;
+  const category=document.createElement("small");
+  category.textContent=work.category+" · "+work.date;
 
-      const channels = document.createElement("div");
-      channels.className = "channels";
+  const title=document.createElement("strong");
+  title.textContent=work.title;
 
-      work.channels.forEach(channel => {
-        const link = document.createElement("a");
-        link.textContent = channel.name;
-        link.setAttribute("aria-label", channel.name + "에서 작품 보기");
-        link.style.setProperty(
-          "--channel-color",
-          channelColors[channel.name] || "var(--accent)"
-        );
+  const channels=document.createElement("div");
+  channels.className="channels";
 
-        if (channel.url) {
-          link.href = channel.url;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-        } else {
-          link.href = "#";
-          link.addEventListener("click", event => event.preventDefault());
-        }
+  work.channels.forEach(item=>{
+    if(!item.url)return;
 
-        link.addEventListener("click", event => event.stopPropagation());
-        channels.appendChild(link);
-      });
+    const link=document.createElement("a");
+    link.textContent=item.name;
+    link.setAttribute("aria-label",item.name+"에서 "+work.title+" 보기");
+    link.style.setProperty("--channel-color",colors[item.name]||"var(--accent)");
+    setExternalLink(link,item.url);
 
-      caption.append(category, title, channels);
-      front.append(art, caption);
-
-      const back = document.createElement("div");
-      back.className = "card-face card-back";
-
-      const backLabel = document.createElement("small");
-      backLabel.textContent = "STORY INFO";
-
-      const backTitle = document.createElement("strong");
-      backTitle.textContent = work.title;
-
-      const description = document.createElement("p");
-      description.textContent = work.description;
-
-      const tip = document.createElement("span");
-      tip.className = "back-tip";
-      tip.textContent = "카드를 다시 누르면 앞면으로 돌아갑니다";
-
-      back.append(backLabel, backTitle, description, tip);
-      inner.append(front, back);
-      card.appendChild(inner);
-
-      card.addEventListener("click", event => {
-        if (event.target.closest("a")) return;
-
-        if (current === index) {
-          card.classList.toggle("flipped");
-        } else {
-          current = index;
-          render();
-        }
-      });
-
-      return card;
-    }
-
-    works.forEach((work, index) => {
-      stage.appendChild(makeCard(work, index));
-
-      const menuItem = document.createElement("button");
-      menuItem.type = "button";
-      menuItem.textContent = work.title;
-      menuItem.addEventListener("click", () => {
-        current = index;
-        render();
-        closeMenu();
-      });
-      menuWorkList.appendChild(menuItem);
+    link.addEventListener("click",event=>{
+      event.stopPropagation();
     });
 
-    function render() {
-      [...stage.children].forEach((card, index) => {
-        let distance = index - current;
+    channels.append(link);
+  });
 
-        if (distance > works.length / 2) distance -= works.length;
-        if (distance < -works.length / 2) distance += works.length;
+  caption.append(category,title,channels);
+  front.append(art,caption);
 
-        card.dataset.distance =
-          Math.abs(distance) > 2 ? "hidden" : String(distance);
+  const back=document.createElement("div");
+  back.className="card-face card-back";
 
-        if (distance !== 0) card.classList.remove("flipped");
-      });
+  const label=document.createElement("small");
+  label.textContent="STORY INFO · "+work.date;
 
-      counter.textContent =
-        `${String(current + 1).padStart(2, "0")} / ${String(works.length).padStart(2, "0")}`;
+  const backTitle=document.createElement("strong");
+  backTitle.textContent=work.title;
 
-      selectedTitle.textContent = works[current].title;
-      selectedSynopsis.textContent =
-        works[current].synopsis.replace(/([.!?])\s+/g, "$1\n");
+  const description=document.createElement("p");
+  description.textContent=work.description;
+  back.append(label,backTitle,description);
+
+  if(work.detailUrl){
+    const detail=document.createElement("a");
+    detail.className="detail-link";
+    detail.textContent="상세 페이지 보기 ↗";
+    setExternalLink(detail,work.detailUrl);
+    detail.addEventListener("click",event=>event.stopPropagation());
+    back.append(detail);
+  }
+
+  const tip=document.createElement("span");
+  tip.className="back-tip";
+  tip.textContent="카드를 다시 누르면 앞면으로 돌아갑니다";
+  back.append(tip);
+
+  card.append(front,back);
+  card.addEventListener("click",event=>{
+    if(event.target.closest("a"))return;
+    if(swiped){
+      swiped=false;
+      return;
     }
-
-    document.getElementById("prevButton").addEventListener("click", () => {
-      current = (current - 1 + works.length) % works.length;
+    if(current===index){
+      card.classList.toggle("flipped");
+    }else{
+      current=index;
       render();
-    });
-
-    document.getElementById("nextButton").addEventListener("click", () => {
-      current = (current + 1) % works.length;
-      render();
-    });
-
-    stage.addEventListener("touchstart", event => {
-      touchStartX = event.changedTouches[0].screenX;
-    }, { passive: true });
-
-    stage.addEventListener("touchend", event => {
-      const distance = event.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(distance) <= 40) return;
-
-      current =
-        (current + (distance < 0 ? 1 : -1) + works.length) % works.length;
-      render();
-    }, { passive: true });
-
-    function closeMenu() {
-      menuPanel.hidden = true;
-      menuButton.setAttribute("aria-expanded", "false");
     }
+  });
 
-    menuButton.addEventListener("click", () => {
-      menuPanel.hidden = !menuPanel.hidden;
-      menuButton.setAttribute("aria-expanded", String(!menuPanel.hidden));
-    });
+  return card;
+}
 
-    aboutButton.addEventListener("click", () => {
-      aboutCopy.hidden = !aboutCopy.hidden;
-      aboutButton.setAttribute("aria-expanded", String(!aboutCopy.hidden));
-    });
+works.forEach((work,index)=>{
+  stage.append(makeCard(work,index));
 
-    worksButton.addEventListener("click", () => {
-      menuWorkList.hidden = !menuWorkList.hidden;
-      worksButton.setAttribute("aria-expanded", String(!menuWorkList.hidden));
-    });
-
-    document.addEventListener("click", event => {
-      if (!event.target.closest(".header")) closeMenu();
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") closeMenu();
-    });
-
-    function updateThemeButton() {
-      const light = document.documentElement.dataset.theme === "light";
-      themeButton.setAttribute(
-        "aria-label",
-        light ? "다크 모드로 변경" : "라이트 모드로 변경"
-      );
-    }
-
-    themeButton.addEventListener("click", () => {
-      const light = document.documentElement.dataset.theme === "light";
-      document.documentElement.dataset.theme = light ? "dark" : "light";
-
-      try {
-        localStorage.setItem(
-          "almond-theme",
-          document.documentElement.dataset.theme
-        );
-      } catch (error) {}
-
-      updateThemeButton();
-    });
-
-    try {
-      const savedTheme = localStorage.getItem("almond-theme");
-      if (savedTheme === "light" || savedTheme === "dark") {
-        document.documentElement.dataset.theme = savedTheme;
-      }
-    } catch (error) {}
-
-    updateThemeButton();
+  const item=document.createElement("button");
+  item.type="button";
+  item.textContent=work.title;
+  item.addEventListener("click",()=>{
+    current=index;
     render();
-  </script>
+    closeMenu();
+  });
+  $("menuWorkList").append(item);
+});
+
+function render(){
+  [...stage.children].forEach((card,index)=>{
+    let distance=index-current;
+    if(distance>works.length/2)distance-=works.length;
+    if(distance< -works.length/2)distance+=works.length;
+
+    card.dataset.distance=Math.abs(distance)>2?"hidden":String(distance);
+    if(distance!==0)card.classList.remove("flipped");
+  });
+
+  $("counter").textContent=
+    `${String(current+1).padStart(2,"0")} / ${String(works.length).padStart(2,"0")}`;
+
+  $("selectedTitle").textContent=works[current].title;
+  $("selectedSynopsis").textContent=
+    works[current].synopsis.replace(/([.!?])\s+/g,"$1\n");
+}
+
+$("prevButton").addEventListener("click",()=>{
+  current=(current-1+works.length)%works.length;
+  render();
+});
+
+$("nextButton").addEventListener("click",()=>{
+  current=(current+1)%works.length;
+  render();
+});
+
+stage.addEventListener("touchstart",event=>{
+  touchStartX=event.changedTouches[0].screenX;
+  swiped=false;
+},{passive:true});
+
+stage.addEventListener("touchend",event=>{
+  const distance=event.changedTouches[0].screenX-touchStartX;
+  if(Math.abs(distance)>40){
+    swiped=true;
+    current=(current+(distance<0?1:-1)+works.length)%works.length;
+    render();
+    setTimeout(()=>swiped=false,400);
+  }
+},{passive:true});
+
+function closeMenu(){
+  menu.hidden=true;
+  $("menuButton").setAttribute("aria-expanded","false");
+}
+
+$("menuButton").addEventListener("click",()=>{
+  menu.hidden=!menu.hidden;
+  $("menuButton").setAttribute("aria-expanded",String(!menu.hidden));
+});
+
+$("aboutButton").addEventListener("click",()=>{
+  const copy=$("aboutCopy");
+  copy.hidden=!copy.hidden;
+  $("aboutButton").setAttribute("aria-expanded",String(!copy.hidden));
+});
+
+$("worksButton").addEventListener("click",()=>{
+  const list=$("menuWorkList");
+  list.hidden=!list.hidden;
+  $("worksButton").setAttribute("aria-expanded",String(!list.hidden));
+});
+
+document.addEventListener("click",event=>{
+  if(!event.target.closest(".header"))closeMenu();
+});
+
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape")closeMenu();
+});
+
+function updateThemeButton(){
+  const light=document.documentElement.dataset.theme==="light";
+  $("themeButton").setAttribute(
+    "aria-label",
+    light?"다크 모드로 변경":"라이트 모드로 변경"
+  );
+}
+
+$("themeButton").addEventListener("click",()=>{
+  document.documentElement.dataset.theme=
+    document.documentElement.dataset.theme==="light"?"dark":"light";
+
+  try{
+    localStorage.setItem("almond-theme",document.documentElement.dataset.theme);
+  }catch(error){}
+
+  updateThemeButton();
+});
+
+try{
+  const saved=localStorage.getItem("almond-theme");
+  if(saved==="light"||saved==="dark"){
+    document.documentElement.dataset.theme=saved;
+  }
+}catch(error){}
+
+updateThemeButton();
+render();
+</script>
 </body>
 </html>
