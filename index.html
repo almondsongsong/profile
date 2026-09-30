@@ -51,9 +51,11 @@ main{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:
 .card-back,.story-card.flipped .card-front{display:none}
 .story-card.flipped .card-back{display:flex}
 
-.card-art{position:relative;flex:1;min-height:0;display:flex;align-items:flex-end;padding:18px;background:linear-gradient(145deg,#8c6a52,#50362c 48%,#221b1b);background-size:cover;background-position:center}
+.card-art{position:relative;display:block;flex:1;min-height:0;overflow:hidden;background:var(--panel)}
+.card-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
+.image-message{position:absolute;inset:0;display:grid;place-items:center;padding:20px;color:var(--muted);font-size:12px;text-align:center}
 .cover-title{z-index:1;color:#fff1e6;font:italic clamp(16px,1.9vw,21px)/1.35 Georgia,serif;text-shadow:0 1px 8px #0009;word-break:keep-all}
-.card-caption{min-height:103px;padding:13px 15px}
+.card-caption{flex-shrink:0;min-height:103px;padding:13px 15px}
 .card-caption small,.card-back small{color:var(--accent);font-size:10px}
 .card-caption strong{display:block;margin-top:5px;font-size:13px;line-height:1.35;word-break:keep-all}
 .channels{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
@@ -61,7 +63,7 @@ main{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:
 .channels a:hover{background:var(--channel-color);color:#fff}
 .card-back{justify-content:center;gap:13px;padding:20px}
 .card-back strong{font-size:18px;line-height:1.35;word-break:keep-all}
-.card-back p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.card-back p{margin:0;color:var(--muted);font-size:12px;line-height:1.6;white-space:pre-line}
 .detail-link{align-self:flex-start;padding:0;border:0;background:none;color:var(--accent);font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
 .detail-link:hover{color:var(--text)}
 .back-tip{margin-top:auto;color:var(--muted);font-size:10px}
@@ -89,7 +91,6 @@ main{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:
   .story-card[data-distance="1"]{transform:translateX(107px) scale(.87)}
   .story-card[data-distance="-2"]{transform:translateX(-165px) scale(.7)}
   .story-card[data-distance="2"]{transform:translateX(165px) scale(.7)}
-  .card-art{padding:15px}
   .cover-title{font-size:14px}
   .card-caption{min-height:92px;padding:10px 12px}
   .card-caption strong{font-size:12px}
@@ -168,97 +169,147 @@ const creatorLinks=[
 
 const works=[
   {
-    title:"아래쪽은 다 압니다만",
-    category:"의료 로맨스",
-    date:"2026.09.24",
-    synopsis:"성운대 메디컬 센터에서 사사건건 부딪히는 산부인과 의사와 비뇨기과 의사. 서로의 실력만큼은 인정하는 두 사람이 협진을 거듭하며 가까워집니다.",
-    description:"성운대 메디컬 센터를 배경으로 한 전문직 앙숙 로맨스. 진료 방식과 성격이 맞지 않아 충돌하는 두 의사가 협진을 통해 서로를 새롭게 알아갑니다.",
-    image:"이곳에_이미지_주소",
-    detailUrl:"https://almondsongsong.github.io/medical/",
-    channels:[
-      {name:"유니챗",url:"https://www.univers.chat/character/0d3dd5a0-578f-4964-93fb-5b7cbcfbd1d9"},
-      {name:"크랙",url:"https://share.crack.wrtn.ai/au1kor"},
-      {name:"티키타",url:"https://tikita.ai/ko/story/NTFMLUDK?referrer=Z7272W"}
-    ]
+    "title": "아래쪽은 다 압니다만",
+    "category": "의료 로맨스",
+    "date": "2026.09.24",
+    "synopsis": "성운대 메디컬 센터에서 사사건건 부딪히는 산부인과 의사와 비뇨기과 의사. 서로의 실력만큼은 인정하는 두 사람이 협진을 거듭하며 가까워진다.",
+    "description": "성운대 메디컬 센터를 배경으로 한 전문직 앙숙 로맨스. 진료 방식과 성격이 맞지 않아 충돌하는 두 의사가 협진을 통해 서로를 새롭게 알아간다.",
+    "image": "https://auth.tikita.ai/storage/v1/object/public/avatars/character-library/c5a099f7-a393-4775-b04f-bee979837480/user-9482275b-5719-4316-a93e-f41c7307f2ba.webp",
+    "detailUrl": "https://almondsongsong.github.io/medical/",
+    "channels": [
+      {
+        "name": "유니챗",
+        "url": "https://www.univers.chat/character/0d3dd5a0-578f-4964-93fb-5b7cbcfbd1d9"
+      },
+      {
+        "name": "크랙",
+        "url": "https://share.crack.wrtn.ai/au1kor"
+      },
+      {
+        "name": "티키타",
+        "url": "https://tikita.ai/ko/story/NTFMLUDK?referrer=Z7272W"
+      }
+    ],
+    "imagePosition": "center top"
   },
   {
-    title:"최애가 나를 찾고 있다",
-    category:"배우 × 작가",
-    date:"2026.09.26",
-    synopsis:"얼굴 없는 작가 ‘안개’의 소설을 공개 추천한 톱배우 도희상. 6년째 그를 좋아해 온 작가는 정체를 숨긴 채 그의 드라마 제작 현장에 들어갑니다.",
-    description:"필명 ‘안개’로 활동하는 작가는 도희상의 6년 차 팬입니다. 도희상은 안개의 열성 독자지만 그녀의 정체를 모릅니다. 두 사람은 드라마 대본 자문을 계기로 만나게 됩니다.",
-    image:"이곳에_이미지_주소",
-    detailUrl:"https://almondsongsong.github.io/unichat-page/",
-    channels:[
-      {name:"유니챗",url:"https://www.univers.chat/character/fb512b9d-8088-4f0c-a290-7222f9cc754b"},
-      {name:"크랙",url:"https://share.crack.wrtn.ai/0vx6bfas"},
-      {name:"티키타",url:"https://tikita.ai/ko/story/N5L498B0?referrer=Z7272W"},
-      {name:"케이브덕",url:"https://ko.cvdk.io/c/s7Gg42RJSP-EV-U3eNfH5Q?rc=gwSjCGhhIY"}
-    ]
+    "title": "최애가 나를 찾고 있다",
+    "category": "배우 × 작가",
+    "date": "2026.09.26",
+    "synopsis": "얼굴 없는 작가 ‘안개’의 소설을 공개 추천한 톱배우 도희상. 6년째 그를 좋아해 온 작가는 정체를 숨긴 채 그의 드라마 제작 현장에 들어간다.",
+    "description": "필명 ‘안개’로 활동하는 작가는 도희상의 6년 차 팬이다. 도희상은 안개의 열성 독자지만 그녀의 정체를 모른다. 두 사람은 드라마 대본 자문을 계기로 만나게 된다.",
+    "image": "https://auth.tikita.ai/storage/v1/object/public/avatars/character-library/c5a099f7-a393-4775-b04f-bee979837480/story-intro-8a9ea7c9-adbf-5ab1-8644-75ce9eb6d429.webp",
+    "detailUrl": "https://almondsongsong.github.io/unichat-page/",
+    "channels": [
+      {
+        "name": "유니챗",
+        "url": "https://www.univers.chat/character/fb512b9d-8088-4f0c-a290-7222f9cc754b"
+      },
+      {
+        "name": "크랙",
+        "url": "https://share.crack.wrtn.ai/0vx6bfas"
+      },
+      {
+        "name": "티키타",
+        "url": "https://tikita.ai/ko/story/N5L498B0?referrer=Z7272W"
+      },
+      {
+        "name": "케이브덕",
+        "url": "https://ko.cvdk.io/c/s7Gg42RJSP-EV-U3eNfH5Q?rc=gwSjCGhhIY"
+      }
+    ],
+    "imagePosition": "center top"
   },
   {
-    title:"현실에선 상극. 접속하면 절친 (남성향)",
-    category:"캠퍼스 로코 · 남성향",
-    date:"2026.09.27",
-    synopsis:"대학에서는 마주치기만 해도 부딪히는 동기. 게임에서는 서로의 정체도 모른 채 1년째 완벽한 호흡을 자랑하는 절친 듀오입니다.",
-    description:"현실에서는 상극인 대학 동기 두 사람이 온라인 FPS 게임에서는 서로의 정체를 모른 채 오랫동안 듀오로 지내 왔습니다. 게임 밖에서 상대의 정체를 알게 되면서 관계가 흔들립니다.",
-    image:"이곳에_이미지_주소",
-    detailUrl:"https://almondsongsong.github.io/BATTLEATTACK/",
-    channels:[
-      {name:"티키타",url:"https://tikita.ai/ko/story/17JUNOZP?referrer=Z7272W"}
-    ]
+    "title": "현실에선 상극. 접속하면 절친 (여성향)",
+    "category": "캠퍼스 로코 · 여성향",
+    "date": "2026.09.27",
+    "synopsis": "대학에서는 마주치기만 해도 부딪히는 동기. 게임에서는 서로의 정체도 모른 채 1년째 완벽한 호흡을 자랑하는 절친 듀오다.",
+    "description": "현실에서는 상극인 대학 동기 두 사람이 온라인 FPS 게임에서는 서로의 정체를 모른 채 오랫동안 듀오로 지내 왔다. 게임 밖에서 상대의 정체를 알게 되면서 관계가 흔들린다.",
+    "image": "https://auth.tikita.ai/storage/v1/object/public/avatars/character-library/c5a099f7-a393-4775-b04f-bee979837480/story-intro-2148f876-443b-5ec1-ba46-77348db6bf83.webp",
+    "detailUrl": "https://almondsongsong.github.io/BATTLE-ATTACK/",
+    "channels": [
+      {
+        "name": "티키타",
+        "url": "https://tikita.ai/ko/story/17JUNOZP?referrer=Z7272W"
+      }
+    ],
+    "imagePosition": "center top"
   },
   {
-    title:"현실에선 상극. 접속하면 절친 (여성향)",
-    category:"캠퍼스 로코 · 여성향",
-    date:"2026.09.28",
-    synopsis:"현실에서는 사사건건 맞서는 대학 동기. 하지만 게임에 접속하면 누구보다 서로를 잘 아는 듀오가 됩니다.",
-    description:"서로를 못마땅해하는 두 대학 동기가 게임 속에서는 가장 믿음직한 파트너로 지내고 있습니다. 익숙한 목소리와 행동에서 서로의 정체를 의심하기 시작합니다.",
-    image:"이곳에_이미지_주소",
-    detailUrl:"https://almondsongsong.github.io/BATTLE-ATTACK/",
-    channels:[
-      {name:"티키타",url:"https://tikita.ai/ko/story/DC087T6T?referrer=Z7272W"}
-    ]
+    "title": "현실에선 상극. 접속하면 절친 (남성향)",
+    "category": "캠퍼스 로코 · 남성향",
+    "date": "2026.09.28",
+    "synopsis": "현실에서는 사사건건 맞서는 대학 동기. 하지만 게임에 접속하면 누구보다 서로를 잘 아는 듀오가 된다.",
+    "description": "서로를 못마땅해하는 두 대학 동기가 게임 속에서는 가장 믿음직한 파트너로 지내고 있다. 익숙한 목소리와 행동에서 서로의 정체를 의심하기 시작한다.",
+    "image": "https://auth.tikita.ai/storage/v1/object/public/avatars/character-library/c5a099f7-a393-4775-b04f-bee979837480/story-intro-10933ea3-ffbb-5003-94a9-c8cc52a43156.webp",
+    "detailUrl": "https://almondsongsong.github.io/BATTLEATTACK/",
+    "channels": [
+      {
+        "name": "티키타",
+        "url": "https://tikita.ai/ko/story/DC087T6T?referrer=Z7272W"
+      }
+    ],
+    "imagePosition": "center top"
   },
   {
-    title:"칼끝과 펜끝이 젖어 드는 밤",
-    category:"셰프 × 리뷰어",
-    date:"2026.09.29",
-    synopsis:"한 접시의 요리를 두고 만난 셰프와 리뷰어. 날카로운 평가에서 시작된 관계가 서로의 진심을 알아가는 이야기로 이어집니다.",
-    description:"요리에 자부심이 강한 셰프와 날카로운 시선으로 글을 쓰는 리뷰어가 만납니다. 음식에 관한 의견 충돌은 두 사람이 서로를 깊이 들여다보는 계기가 됩니다.",
-    image:"이곳에_이미지_주소",
-    detailUrl:"",
-    channels:[
-      {name:"티키타",url:"https://tikita.ai/ko/story/BWHH7E46?referrer=Z7272W"}
-    ]
+    "title": "칼끝과 펜끝이 젖어 드는 밤",
+    "category": "셰프 × 리뷰어",
+    "date": "2026.09.29",
+    "synopsis": "한 접시의 요리를 두고 만난 셰프와 리뷰어. 날카로운 평가에서 시작된 관계가 서로의 진심을 알아가는 이야기로 이어진다.",
+    "description": "요리에 자부심이 강한 셰프와 날카로운 시선으로 글을 쓰는 리뷰어가 만난다. 음식에 관한 의견 충돌은 두 사람이 서로를 깊이 들여다보는 계기가 된다.",
+    "image": "https://cdn.imagetourls.com/uploads/tyImg/17JVMrcKY.png",
+    "detailUrl": "",
+    "channels": [
+      {
+        "name": "티키타",
+        "url": "https://tikita.ai/ko/story/BWHH7E46?referrer=Z7272W"
+      }
+    ],
+    "imagePosition": "center top",
+    "imageFallback": "https://auth.tikita.ai/storage/v1/object/public/avatars/motion-thumbnails/c5a099f7-a393-4775-b04f-bee979837480/bfd9b875-9a79-4bd3-9e27-9f8c0d6517e0.webp"
   },
   {
-    title:"옆집 문이 닫히기 전에",
-    category:"이웃 로맨스",
-    date:"2026.09.29",
-    synopsis:"어린 시절 알고 지낸 두 사람이 성인이 되어 옆집 이웃으로 다시 만납니다. 닫힌 문 하나를 사이에 두고 익숙했던 관계가 조금씩 달라집니다.",
-    description:"한유나가 강현욱의 옆집으로 이사 오며 재회합니다. 오래된 기억과 지금의 낯선 설렘 사이에서 두 사람의 거리가 조금씩 가까워집니다.",
-    image:"이곳에_이미지_주소",
-    detailUrl:"https://almondsongsong.github.io/nextdoor/",
-    channels:[
-      {name:"티키타",url:"https://tikita.ai/ko/story/497LWE41"}
-    ]
+    "title": "옆집 문이 닫히기 전에",
+    "category": "이웃 로맨스",
+    "date": "2026.09.29",
+    "synopsis": "어린 시절 알고 지낸 두 사람이 성인이 되어 옆집 이웃으로 다시 만난다. 닫힌 문 하나를 사이에 두고 익숙했던 관계가 조금씩 달라진다.",
+    "description": "한유나가 강현욱의 옆집으로 이사 오며 재회한다. 오래된 기억과 지금의 낯선 설렘 사이에서 두 사람의 거리가 조금씩 가까워진다.",
+    "image": "https://cdn.imagetourls.com/uploads/tyImg/9zxEFeaS.png",
+    "detailUrl": "https://almondsongsong.github.io/nextdoor/",
+    "channels": [
+      {
+        "name": "티키타",
+        "url": "https://tikita.ai/ko/story/497LWE41?referrer=Z7272W"
+      }
+    ],
+    "imagePosition": "center top",
+    "imageFallback": "https://auth.tikita.ai/storage/v1/object/public/avatars/character-library/c5a099f7-a393-4775-b04f-bee979837480/user-150a6014-793a-4f38-91c6-508176d9c787.webp"
   },
-    {
-    title:"대공의 이혼 서류를 쓰는 서기관",
-    category:"북부대공 × 서기관",
-    date:"2026.09.30",
-    synopsis:"test",
-    description:"북부대공 루시안 아르덴은 아직 치르지 않은 결혼의 '이혼서류'를 써달라며 왕실 혼인 문서를 관리하는 서기관인 당신 앞에 찾아옵니다.",
-    image:"https://i.ibb.co/wZZRr7Yg/e5e0fe08-ec2e-4ce1-a962-8224e5517bef.png",
-    detailUrl:"https://almondsongsong.github.io/20260930-duke-divorce/",
-    channels:[
-    /*{name:"유니챗",url:"이곳에_URL"},
-      {name:"크랙",url:"이곳에_URL"},
-      {name:"티키타",url:"이곳에_URL"},
-      {name:"케이브덕",url:"이곳에_URL"} */
-    ]
-  },
+  {
+    "title": "대공의 이혼 서류를 쓰는 서기관",
+    "category": "북부대공 × 서기관",
+    "date": "2026.09.30",
+    "synopsis": "왕실 혼인 문서를 관리하는 서기관인 당신 앞에 북부대공이 찾아와,\n아직 치르지 않은 결혼의 이혼 서류를 써 달라고 부탁한다.",
+    "description": "왕실 혼인 문서를 관리하는 서기관인 당신 앞에 북부대공이 찾아와,\n아직 치르지 않은 결혼의 이혼 서류를 써 달라고 부탁한다.",
+    "image": "https://i.ibb.co/vvdcSRww/image.jpg",
+    "detailUrl": "https://almondsongsong.github.io/20260930-duke-divorce/",
+    "channels": [
+      {
+        "name": "유니챗",
+        "url": "https://www.univers.chat/character/737f2547-11c6-4708-9015-91ee2b9bad31"
+      },
+      {
+        "name": "티키타",
+        "url": "https://tikita.ai/ko/story/A948R5UP"
+      },
+      {
+        "name": "케이브덕",
+        "url": "https://caveduck.io/character-info/6286ffa4-7629-498f-8452-ccff6f64911a"
+      }
+    ],
+    "imagePosition": "center top"
+  }
 ];
 
 const colors={
@@ -316,21 +367,32 @@ function makeCard(work,index){
 
   const art=document.createElement("div");
   art.className="card-art";
-  if(work.image){
-    art.style.backgroundImage=
-      `linear-gradient(to top,rgba(0,0,0,.55),transparent 55%),url("${work.image.replaceAll('"',"%22")}")`;
-  }
-
-  const cover=document.createElement("span");
-  cover.className="cover-title";
-  cover.textContent=work.title;
-  art.append(cover);
+  const image=document.createElement("img");
+  image.className="card-image";
+  image.alt=work.title+" 작품 표지";
+  image.decoding="async";
+  image.draggable=false;
+  let fallbackUsed=false;
+  image.addEventListener("error",()=>{
+    if(work.imageFallback&&!fallbackUsed){
+      fallbackUsed=true;
+      image.src=work.imageFallback;
+      return;
+    }
+    image.hidden=true;
+    const message=document.createElement("span");
+    message.className="image-message";
+    message.textContent="이미지를 불러오지 못했습니다.";
+    art.append(message);
+  });
+  image.src=work.image;
+  art.append(image);
 
   const caption=document.createElement("div");
   caption.className="card-caption";
 
   const category=document.createElement("small");
-  category.textContent=work.category+" · "+work.date;
+  category.textContent=work.category;
 
   const title=document.createElement("strong");
   title.textContent=work.title;
@@ -363,7 +425,7 @@ function makeCard(work,index){
 
   const detail=makeDestinationLink(
     "자세히 보기",
-    work.detailUrl,
+    work.detailUrl||work.channels[0]?.url||"",
     "detail-link",
     work.title+" 자세히 보기"
   );
