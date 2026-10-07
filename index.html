@@ -354,9 +354,11 @@ const works=[
     "image": "https://almondsongsong.github.io/20261004-deliver-me/story.png",
     "detailUrl": "https://almondsongsong.github.io/20261004-deliver-me/",
     "channels": [],
-    "imageFit": "contain"
+    "imageFit": "cover"
   }
 ];
+
+works.reverse();
 
 const colors={
   "티키타":"#4E42FF",
@@ -372,7 +374,7 @@ const colors={
 const $=id=>document.getElementById(id);
 const stage=$("stage");
 const menu=$("menuPanel");
-let current=works.length-1;
+let current=0;
 let touchStartX=0;
 let swiped=false;
 
