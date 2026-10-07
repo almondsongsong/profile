@@ -344,6 +344,17 @@ const works=[
       }
     ],
     "imagePosition": "center top"
+  },
+  {
+    "title": "구원해주소서",
+    "category": "로맨스 · 구원서사 · 보호동거",
+    "date": "준비 중",
+    "synopsis": "나는 그곳에서 도망쳤고, 그는 그곳의 진실을 밝힌다.",
+    "description": "성은교가 정한 혼인을 피해 도망친 당신. 누나의 죽음을 조사하는 전직 기자 신재하와 함께 지내며, 교단의 진실과 자신이 원하는 삶을 찾아가는 쌍방 구원 로맨스.",
+    "image": "https://almondsongsong.github.io/20261004-deliver-me/story.png",
+    "detailUrl": "https://almondsongsong.github.io/20261004-deliver-me/",
+    "channels": [],
+    "imageFit": "contain"
   }
 ];
 
@@ -425,6 +436,7 @@ function makeCard(work,index){
     art.append(message);
   });
   image.src=work.image;
+  if(work.imageFit)image.style.objectFit=work.imageFit;
   art.append(image);
 
   const caption=document.createElement("div");
